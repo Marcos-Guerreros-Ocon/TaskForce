@@ -1,0 +1,16 @@
+{
+    "name": "marcos/aplicacion",
+    "description": "Aplicación Web de Task Force",
+    "autoload": {
+        "psr-4": {
+            "Marcos\\Aplicacion\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Marcos Guerreros Ocón",
+            "email": "guerrerosoconm@gmail.com"
+        }
+    ],
+    "require": {}
+}

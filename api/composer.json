@@ -1,0 +1,16 @@
+{
+    "name": "marcos/api",
+    "description": "API Rest de la aplicación TaskForce",
+    "autoload": {
+        "psr-4": {
+            "Marcos\\Api\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Marcos Guerreros Ocón",
+            "email": "guerrerosoconm@gmail.com"
+        }
+    ],
+    "require": {}
+}
