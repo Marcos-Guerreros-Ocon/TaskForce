@@ -8,13 +8,23 @@ $id = "";
 $method = RUTA_URL . "/proyectos/nuevo";
 
 if (isset($datos['proyecto'])) {
-    $method = RUTA_URL . "/proyectos/actualizar";
+    $method = RUTA_URL . "/proyectos/" . $datos['proyecto']['id_proyecto'];
     $id = $datos['proyecto']['id_proyecto'];
     $nombre = $datos['proyecto']['nombre'];
     $descripcion = $datos['proyecto']['descripcion'];
     $cliente = $datos['proyecto']['cliente'];
     $fechaInicio = $datos['proyecto']['fecha_inicio'];
     $fechaFin = $datos['proyecto']['fecha_estimacion_final'];
+}
+
+$exito = false;
+if (isset($datos['exito'])) {
+    $exito = $datos['exito'];
+    unset($datos['exito']);
+}
+if (isset($_SESSION['exito'])) {
+    $exito = $_SESSION['exito'];
+    unset($_SESSION['exito']);
 }
 ?>
 <!DOCTYPE html>
@@ -37,6 +47,7 @@ if (isset($datos['proyecto'])) {
     <!-- Custom styles for this template-->
     <link href="<?= RUTA_URL ?>/public/css/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link href="<?= RUTA_URL ?>/public/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
 
     <style>
         .msg-error {
@@ -178,15 +189,16 @@ if (isset($datos['proyecto'])) {
     <!-- Custom scripts for all pages-->
     <script src="<?= RUTA_URL ?>/public/js/sb-admin-2.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
     <script>
         const form = document.getElementsByTagName("form")[0];
 
 
         form.onsubmit = () => {
-            if (!isValid) {
+            if (!isValid()) {
                 event.preventDefault();
                 return false;
-
             }
         }
 
@@ -281,6 +293,27 @@ if (isset($datos['proyecto'])) {
 
 
         }
+
+        <?php if ($exito) : ?>
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+            toastr.success('<?= $exito ?>', 'Éxito');
+        <?php endif; ?>
     </script>
 </body>
 

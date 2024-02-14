@@ -22,12 +22,15 @@ class Proyectos extends Controlador
     }
     public function index($id = null)
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id !== null) {
+            $this->actualizar();
+            return;
+        }
 
         if ($id !== null) {
             $this->proyecto($id);
             return;
         }
-
 
         $url = RUTA_API . 'proyecto';
 
@@ -63,14 +66,8 @@ class Proyectos extends Controlador
         $this->vista('proyectos/proyecto', $data);
     }
 
-    public function actualizar()
+    private function actualizar()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location:' . RUTA_URL . '/proyectos');
-            return;
-        }
-
-
         $id = $_POST['id_proyecto'];
         $nombre = $_POST['nombre'];
         $descripcion = $_POST['descripcion'];
@@ -110,8 +107,14 @@ class Proyectos extends Controlador
             return;
         }
         $proyecto = json_decode($proyecto, true);
-        $proyecto = intval($proyecto['id_proyecto']);
-        header('Location:' . RUTA_URL . '/proyectos/' . $proyecto);
+
+        $data = [
+            'proyecto' => $proyecto,
+            'pag_actual' => 'proyectos',
+            'exito' => 'Proyecto actualizado con éxito'
+        ];
+        $this->vista('proyectos/proyecto', $data);
+        return;
     }
     private function proyecto($id)
     {
@@ -158,7 +161,6 @@ class Proyectos extends Controlador
             'descripcion' => $descripcion,
             'cliente' => $cliente,
             'fecha_inicio' => $fechaInicio,
-
             'id_usuario' => $id_usuario
         ];
 
@@ -184,6 +186,7 @@ class Proyectos extends Controlador
         }
 
         $proyecto = intval(json_decode($proyecto, true));
+        $_SESSION['exito'] = "Proyecto creado con éxito";
         header('Location:' . RUTA_URL . '/proyectos/' . $proyecto);
     }
 }
