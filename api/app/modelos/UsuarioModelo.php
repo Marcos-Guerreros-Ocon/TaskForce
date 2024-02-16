@@ -21,6 +21,14 @@ class UsuarioModelo
         $this->bd->bind(':correo', $correo);
         return $this->bd->registro();
     }
+    public function busquedaByCorreo($correo)
+    {
+        $correo = trim($correo);
+        $correo = "%$correo%";
+        $this->bd->query('SELECT * FROM usuarios WHERE correo LIKE :correo');
+        $this->bd->bind(':correo', $correo);
+        return $this->bd->registros();
+    }
 
     public function getUserByUsername($username)
     {

@@ -73,10 +73,34 @@ class Tarea extends Controlador
     {
         $tarea = $this->modelo('TareaModelo');
         $datos = json_decode(file_get_contents('php://input'), true);
+        if (!$this->isValid($datos)) {
+            header('Content-Type: application/json', true, 400);
+            echo json_encode(['mensaje' => 'Faltan datos']);
+            exit;
+        }
         $token = new Token();
         $aux = $token->getPayload();
-        $idUsuario = $aux->id;
-        $datos['id_usuario'] = $idUsuario;
+        $idUsuario = $aux->id_usr;
+        $rol = $aux->rol;
+        if ($rol === 'usuario') {
+            header('Content-Type: application/json', true, 401);
+            echo json_encode(['mensaje' => 'No tienes permisos para realizar esta acción']);
+            exit;
+        }
+
+        $proyecto = $this->modelo('ProyectoModelo');
+        $proyecto = $proyecto->getProyectoById($datos['id_proyecto']);
+        if (!$proyecto) {
+            header('Content-Type: application/json', true, 404);
+            echo json_encode(['mensaje' => 'El proyecto no existe']);
+            exit;
+        }
+
+        if ($rol === 'gestor' && $proyecto->id_usuario !== $idUsuario) {
+            header('Content-Type: application/json', true, 401);
+            echo json_encode(['mensaje' => 'No tienes permisos para realizar esta acción']);
+            exit;
+        }
         $idTarea = $tarea->addTarea($datos);
         echo json_encode(['id_tarea' => $idTarea]);
     }
@@ -92,5 +116,13 @@ class Tarea extends Controlador
         $tarea = $this->modelo('TareaModelo');
         $tarea->deleteTarea($idTarea);
         echo json_encode(['mensaje' => 'Tarea eliminada']);
+    }
+
+    private function isValid($datos)
+    {
+        if (empty($datos['nombre_tarea']) || empty($datos['descripcion_tarea']) || empty($datos['id_proyecto']) || empty($datos['id_usuario'])) {
+            return false;
+        }
+        return true;
     }
 }

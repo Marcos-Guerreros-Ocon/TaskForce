@@ -54,3 +54,11 @@ CREATE TABLE logs (
     id_log INT AUTO_INCREMENT PRIMARY KEY, id_usuario INT, -- ID del usuario que realizó la acción
     accion_realizada VARCHAR(255), fecha_log TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Modificar la tabla de tareas para agregar la eliminación en cascada
+ALTER TABLE tareas
+ADD CONSTRAINT fk_tareas_proyectos FOREIGN KEY (id_proyecto) REFERENCES proyectos (id_proyecto) ON DELETE CASCADE;
+
+-- Modificar la tabla de comentarios para agregar la eliminación en cascada
+ALTER TABLE comentarios
+ADD CONSTRAINT fk_comentarios_tareas FOREIGN KEY (id_tarea) REFERENCES tareas (id_tarea) ON DELETE CASCADE;

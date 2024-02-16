@@ -177,6 +177,23 @@ class Usuario extends Controlador
         $this->getUsuarioByUsername($username);
     }
 
+    public function busqueda()
+    {
+        if ($_SERVER['REQUEST_METHOD']  !== 'GET') {
+            header('Content-Type: application/json', true, 400);
+            echo json_encode(['mensaje' => 'Metodo no permitido']);
+            return;
+        }
+        $usuarioModelo = $this->modelo('UsuarioModelo');
+        $busqueda = $_GET['correo'] ?? null;
+        if ($busqueda !== null) {
+            $usuarios = $usuarioModelo->busquedaByCorreo($busqueda);
+            header('Content-Type: application/json', true, 200);
+            echo json_encode($usuarios);
+            return;
+        }
+    }
+
     // METODOS PRIVADOS
     private function addUsuario()
     {
@@ -243,13 +260,7 @@ class Usuario extends Controlador
         $usuarioModelo = $this->modelo('UsuarioModelo');
         $usuario = $usuarioModelo->getUsuarioByCorreo($correo);
 
-        if (!$usuario) {
-            header('Content-Type: application/json', true, 404);
-            echo json_encode([
-                'mensaje' => 'No se encontro el usuario'
-            ]);
-            return;
-        }
+
         header('Content-Type: application/json', true, 200);
         echo json_encode($usuario);
     }

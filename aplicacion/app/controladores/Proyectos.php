@@ -106,17 +106,11 @@ class Proyectos extends Controlador
             header('location:' . RUTA_URL . '/usuario');
             return;
         }
-        $proyecto = json_decode($proyecto, true);
 
-        $data = [
-            'proyecto' => $proyecto,
-            'pag_actual' => 'proyectos',
-            'exito' => 'Proyecto actualizado con éxito'
-        ];
-        $this->vista('proyectos/proyecto', $data);
-        return;
+        $_SESSION['exito'] = "Proyecto actualizado con éxito";
+        $this->proyecto($id, true);
     }
-    private function proyecto($id)
+    private function proyecto($id, $exito = null)
     {
         $url = RUTA_API . 'proyecto?id=' . $id;
 
@@ -141,6 +135,9 @@ class Proyectos extends Controlador
             'proyecto' => $proyectos,
             'pag_actual' => 'proyectos'
         ];
+        if ($exito !== null) {
+            $data['exito'] = $exito;
+        }
         $this->vista('proyectos/proyecto', $data);
         return;
     }

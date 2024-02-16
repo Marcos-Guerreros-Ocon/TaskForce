@@ -88,6 +88,10 @@ class Proyecto extends Controlador
             return;
         }
 
+        $tareaModelo = $this->modelo('TareaModelo');
+        $tareas = $tareaModelo->getTareasByProyecto($idProyecto);
+
+        $proyecto->tareas = $tareas;
 
         header('Content-Type: application/json', true, 200);
         echo json_encode($proyecto);

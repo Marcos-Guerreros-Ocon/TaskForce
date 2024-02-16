@@ -30,6 +30,12 @@ class TareaModelo
         $this->bd->bind(':id_usuario', $idUsuario);
         return $this->bd->registros();
     }
+    public function getTareasByProyecto($idProyecto)
+    {
+        $this->bd->query('SELECT t.id_tarea, t.nombre_tarea, t.descripcion_tarea, t.estado, u.correo FROM tareas t JOIN usuarios u ON t.id_usuario = u.id_usuario WHERE id_proyecto = :id_proyecto');
+        $this->bd->bind(':id_proyecto', $idProyecto);
+        return $this->bd->registros();
+    }
     public function addTarea($datos)
     {
         $sql = 'INSERT INTO tareas (';

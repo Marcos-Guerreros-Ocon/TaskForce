@@ -20,10 +20,23 @@
     <link href="<?= RUTA_URL ?>/public/css/sb-admin-2.min.css" rel="stylesheet">
     <link href="<?= RUTA_URL ?>/public/css/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+    <style>
+        tbody td:hover {
+            cursor: pointer;
+        }
+
+        tbody tr {
+            transition: all 0.25s;
+        }
+
+        tbody tr:hover {
+            color: black;
+            background: #b9b9b9 !important;
+        }
+    </style>
 </head>
 
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
@@ -72,7 +85,11 @@
                                         <?php foreach ($datos['proyectos'] as $proyecto) : ?>
                                             <tr id="<?= $proyecto['id_proyecto'] ?>">
                                                 <td><?= $proyecto['nombre'] ?></td>
-                                                <td><?= $proyecto['descripcion'] ?></td>
+                                                <?php if (strlen($proyecto['descripcion']) > 50) : ?>
+                                                    <td><?= substr($proyecto['descripcion'], 0, 50) . "..." ?></td>
+                                                <?php else : ?>
+                                                    <td><?= $proyecto['descripcion'] ?></td>
+                                                <?php endif; ?>
                                                 <td><?= $proyecto['cliente'] ?></td>
                                                 <td><?= date('d/m/Y', strtotime($proyecto['fecha_inicio']))  ?></td>
                                                 <?php if ($proyecto['fecha_estimacion_final'] == '') : ?>
@@ -210,12 +227,22 @@
                 } else {
                     swal.fire({
                         title: "Error",
-                        text: "Ha ocurrido un error al borrar la pelicula",
+                        text: "Ha ocurrido un error al borrar el proyecto",
                         icon: "error",
                         confirmButtonText: "Aceptar",
                     });
                 }
             }
+
+            Array.from(document.querySelectorAll("tr")).forEach(item => {
+                item.onclick = (event) => {
+                    console.log($(event.target).is('td:last-child'));
+                    if ($(event.target).is('td:last-child') || $(event.target).is('td:last-child *')) {
+                        return;
+                    }
+                    window.location.href = `<?= RUTA_URL ?>/proyectos/${item.id}`;
+                }
+            });
         });
     </script>
 

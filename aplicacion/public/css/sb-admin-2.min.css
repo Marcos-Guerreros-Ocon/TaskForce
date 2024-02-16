@@ -32,9 +32,9 @@
     --gray-dark: #5a5c69;
     --primary: #293241;
     --secondary: #858796;
-    --success: #1cc88a;
-    --info: #36b9cc;
-    --warning: #f6c23e;
+    --success: #1cc82a;
+    --info: #2e59d9;
+    --warning: #f6bc3e;
     --danger: #e74a3b;
     --light: #f8f9fc;
     --dark: #5a5c69;
@@ -5456,7 +5456,7 @@ a.badge-success:focus {
 
 .badge-info {
     color: #fff;
-    background-color: #36b9cc
+    background-color: #4e73df
 }
 
 a.badge-info:focus,
@@ -7061,7 +7061,7 @@ button.bg-success:hover {
 }
 
 .bg-info {
-    background-color: #36b9cc !important
+    background-color: #4e73df !important
 }
 
 a.bg-info:focus,
@@ -7072,7 +7072,7 @@ button.bg-info:hover {
 }
 
 .bg-warning {
-    background-color: #f6c23e !important
+    background-color: var(--warning) !important
 }
 
 a.bg-warning:focus,
@@ -12645,4 +12645,17 @@ body.sidebar-toggled footer.sticky-footer {
 .required::after {
     content: " * ";
     color: red;
+}
+
+.img-busqueda {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    max-width: 100px;
+    max-height: 100px;
+
+}
+
+.text-accent {
+    color: var(--primary);
 }
