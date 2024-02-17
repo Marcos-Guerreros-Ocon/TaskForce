@@ -739,9 +739,6 @@ if (isset($_SESSION['exito'])) {
             });
         </script>
     <?php endif; ?>
-
-
-
 </body>
 
 </html>

@@ -14,13 +14,13 @@ class TareaModelo
     }
     public function getTarea($id)
     {
-        $this->bd->query('SELECT * FROM tareas WHERE id_tarea = :id_tarea');
+        $this->bd->query('SELECT t.id_tarea,t.nombre_tarea ,t.descripcion_tarea,p.id_proyecto,p.nombre, p.id_usuario as "id_gestor",t.nombre_tarea,t.descripcion_tarea, t.estado FROM tareas t JOIN proyectos p ON t.id_proyecto = p.id_proyecto WHERE t.id_tarea = :id_tarea');
         $this->bd->bind(':id_tarea', $id);
         return $this->bd->registro();
     }
     public function getTareasByUser($idUsuario)
     {
-        $this->bd->query('SELECT * FROM tareas WHERE id_usuario = :id_usuario');
+        $this->bd->query('SELECT t.id_tarea,p.nombre,t.nombre_tarea,t.descripcion_tarea, t.estado FROM tareas t JOIN proyectos p ON t.id_proyecto = p.id_proyecto WHERE t.id_usuario = :id_usuario');
         $this->bd->bind(':id_usuario', $idUsuario);
         return $this->bd->registros();
     }
@@ -70,6 +70,8 @@ class TareaModelo
             $this->bd->bind(':' . $key, $value);
         }
         $this->bd->execute();
+
+        return $this->getTarea($datos['id_tarea']);
     }
     public function deleteTarea($id)
     {

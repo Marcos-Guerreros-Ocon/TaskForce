@@ -36,8 +36,8 @@
             </a>
         </li>
     <?php endif; ?>
-    <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+    <li class="nav-item <?php if ($datos['pag_actual'] == 'tareas') : ?> active <?php endif; ?>">
+        <a class="nav-link" href="<?= RUTA_URL ?>/tareas">
             <i class="fas fa-fw fa-tasks"></i>
             <span>Mis tareas</span>
         </a>

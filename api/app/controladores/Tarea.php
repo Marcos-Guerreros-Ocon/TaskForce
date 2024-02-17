@@ -30,7 +30,7 @@ class Tarea extends Controlador
                 $this->addTarea();
                 break;
             case 'PUT':
-                $this->updateTarea();
+                $this->updateTarea($idTarea);
                 break;
             case 'DELETE':
                 $this->deleteTarea($idTarea);
@@ -43,30 +43,58 @@ class Tarea extends Controlador
     }
     private function getTareas()
     {
-        $tarea = $this->modelo('TareaModelo');
+        $tareaModelo = $this->modelo('TareaModelo');
         $token = new Token();
         $aux = $token->getPayload();
         $idUsuario = $aux->id_usr;
         $rol = $aux->rol;
+        $adminMode = $_GET['admin'] ?? false;
 
-        switch ($rol) {
-            case 'admin':
-                $tareas = $tarea->getTareas();
-                break;
-            case 'gestor':
-                $tareas = $tarea->getTareasByGestor($idUsuario);
-                break;
-            default:
-                $tareas = $tarea->getTareasByUser($idUsuario);
-                break;
+        if ($adminMode && $rol === 'admin') {
+            $tareas = $tareaModelo->getTareas();
+            echo json_encode($tareas);
+            return;
         }
-
-        return $tareas;
+        $tareas =  $tareaModelo->getTareasByUser($idUsuario);
+        header('Content-Type: application/json', true, 200);
+        echo json_encode($tareas);
+        return;
     }
     private function getTarea($idTarea)
     {
         $tarea = $this->modelo('TareaModelo');
         $tarea = $tarea->getTarea($idTarea);
+        $admin = $_GET['admin'] ?? false;
+
+        if (!$tarea) {
+            header('Content-Type: application/json', true, 404);
+            echo json_encode(['mensaje' => 'La tarea no existe']);
+            exit;
+        }
+        $token = new Token();
+        $aux = $token->getPayload();
+        $idUsuario = $aux->id_usr;
+        $rol = $aux->rol;
+        if ($rol === 'usuario' && $tarea->id_usuario !== $idUsuario) {
+            header('Content-Type: application/json', true, 404);
+            echo json_encode(['mensaje' => 'La tarea no existe']);
+            exit;
+        }
+
+        if ($rol === 'gestor' && $tarea->id_gestor !== $idUsuario) {
+            header('Content-Type: application/json', true, 404);
+            echo json_encode(['mensaje' => 'La tarea no existe']);
+            exit;
+        }
+
+
+
+        if ($rol === 'admin' && $tarea->id_gestor !== $idUsuario && !$admin) {
+            header('Content-Type: application/json', true, 404);
+            echo json_encode(['mensaje' => 'La tarea no existe']);
+            return;
+        }
+        header('Content-Type: application/json', true, 200);
         echo json_encode($tarea);
     }
     private function addTarea()
@@ -108,8 +136,9 @@ class Tarea extends Controlador
     {
         $tarea = $this->modelo('TareaModelo');
         $datos = json_decode(file_get_contents('php://input'), true);
-        $tarea->updateTarea($datos);
-        echo json_encode(['mensaje' => 'Tarea actualizada']);
+        $tarea = $tarea->updateTarea($datos);
+        header('Content-Type: application/json', true, 200);
+        echo json_encode($tarea);
     }
     private function deleteTarea($idTarea)
     {
