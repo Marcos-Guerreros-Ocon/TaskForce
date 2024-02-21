@@ -123,9 +123,8 @@ class Tareas extends Controlador
         $nombre = $_POST['nombreTarea'];
         $descripcion = $_POST['descripcionTarea'];
         $estado = $_POST['estado'];
-        $url = RUTA_API . 'tarea/';
+        $url = RUTA_API . 'tarea?id=' . $id;
         $data = [
-            'id_tarea' => $id,
             'nombre_tarea' => $nombre,
             'descripcion_tarea' => $descripcion,
             'estado' => $estado

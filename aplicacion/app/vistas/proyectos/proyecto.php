@@ -118,105 +118,113 @@ if (isset($_SESSION['exito'])) {
                         </nav>
                     </div>
 
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3 d-flex align-items-center justify-content-between">
-                            <?php if (isset($datos['proyecto'])) : ?>
-                                <h6 class="m-0 font-weight-bold text-primary">Editar Proyecto</h6>
-                            <?php else : ?>
-                                <h6 class="m-0 font-weight-bold text-primary">Nuevo Proyecto</h6>
-                            <?php endif; ?>
-
-                            <a class="btn btn-secondary" href="<?= RUTA_URL ?>/proyectos"><i class="fa fa-arrow-left"></i> Volver</a>
-                        </div>
-                        <div class="card-body">
-                            <form action="<?= $method ?>" method="POST">
-                                <input type="hidden" name="id_proyecto" id="id_proyecto" value="<?= $id ?>">
-                                <div class="form-group">
-                                    <label for="nombre" class="required">Nombre del proyecto</label>
-                                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre del proyecto" required maxlength="25" value="<?= $nombre ?>">
-
-                                </div>
-                                <div class="form-group">
-                                    <label for="descripcion" class="required">Descripción</label>
-                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required maxlength="250"><?= $descripcion ?></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cliente" class="required">Cliente</label>
-                                    <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Cliente" required maxlength="25" value="<?= $cliente ?>">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="fecha_inicio" class="required">Fecha de inicio</label>
-                                    <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required value="<?= $fechaInicio ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="fecha_fin">Fecha de fin</label>
-                                    <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="<?= $fechaFin ?>">
-                                </div>
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <?php if ($id !== "") : ?>
-                                        <button class="btn btn-primary" type="submit"><i class="fa fa-pen mr-1"></i> Actualizar Proyecto</button>
-                                        <a class="btn btn-danger mx-3" id="btnBorrarProyecto"><i class="fa fa-trash mx-2"></i>Borrar proyecto</a>
+                    <div class="row">
+                        <div class="col-lg-12 mb-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                                    <?php if (isset($datos['proyecto'])) : ?>
+                                        <h6 class="m-0 font-weight-bold text-primary">Editar Proyecto</h6>
                                     <?php else : ?>
-                                        <button class="btn btn-primary" type="submit">Agregar Proyecto</button>
+                                        <h6 class="m-0 font-weight-bold text-primary">Nuevo Proyecto</h6>
                                     <?php endif; ?>
+
+                                    <a class="btn btn-secondary" href="<?= RUTA_URL ?>/proyectos"><i class="fa fa-arrow-left"></i> Volver</a>
                                 </div>
+                                <div class="card-body">
+                                    <form action="<?= $method ?>" method="POST">
+                                        <input type="hidden" name="id_proyecto" id="id_proyecto" value="<?= $id ?>">
+                                        <div class="form-group">
+                                            <label for="nombre" class="required">Nombre del proyecto</label>
+                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre del proyecto" required maxlength="25" value="<?= $nombre ?>">
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="descripcion" class="required">Descripción</label>
+                                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required maxlength="250"><?= $descripcion ?></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="cliente" class="required">Cliente</label>
+                                            <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Cliente" required maxlength="25" value="<?= $cliente ?>">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="fecha_inicio" class="required">Fecha de inicio</label>
+                                            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required value="<?= $fechaInicio ?>">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fecha_fin">Fecha de fin</label>
+                                            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="<?= $fechaFin ?>">
+                                        </div>
+                                        <div class="d-flex flex-lg-row flex-column justify-content-center">
+                                            <?php if ($id !== "") : ?>
+                                                <button class="btn btn-primary" type="submit"><i class="fa fa-pen mr-1"></i> Actualizar Proyecto</button>
+                                                <a class="btn btn-danger mx-3" id="btnBorrarProyecto"><i class="fa fa-trash mx-2"></i>Borrar proyecto</a>
+                                            <?php else : ?>
+                                                <button class="btn btn-primary" type="submit">Agregar Proyecto</button>
+                                            <?php endif; ?>
+                                        </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
 
                     <?php if (isset($datos['proyecto'])) : ?>
-                        <div class="d-flex">
-                            <div class="card shadow mb-4 mr-5 w-75">
-                                <div class="card-header py-3 d-flex align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Tareas del proyecto</h6>
-                                    <a class="btn btn-primary" data-target="#addTareaModal" data-toggle="modal">Agregar Tarea</a>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered" id="dataTable" cellspacing="0">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nombre</th>
-                                                    <th>Descripción</th>
-                                                    <th>Trabajador asociado</th>
-                                                    <th>Estado</th>
-                                                    <th>Accion</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php foreach ($datos['proyecto']['tareas'] as $tarea) : ?>
+                        <div class="row">
+                            <div class="col-xl-8 col-lg-7 mb-4">
+                                <div class="card shadow">
+                                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Tareas del proyecto</h6>
+                                        <a class="btn btn-primary" data-target="#addTareaModal" data-toggle="modal">Agregar Tarea</a>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered" id="dataTable" cellspacing="0">
+                                                <thead>
                                                     <tr>
-                                                        <td><?= $tarea['nombre_tarea'] ?></td>
-                                                        <td><?= $tarea['descripcion_tarea'] ?></td>
-                                                        <td><?= $tarea['correo'] ?></td>
-                                                        <td>
-                                                            <?php if ($tarea['estado'] === "pendiente") : ?>
-                                                                <span class="badge bg-warning text-accent p-2">Pendiente</span>
-                                                            <?php elseif ($tarea['estado'] === 'en_progreso') : ?>
-                                                                <span class="badge bg-info  text-accent p-2">En progreso</span>
-                                                            <?php else : ?>
-                                                                <span class="badge bg-success text-accent p-2 ">Completada</span>
-                                                            <?php endif; ?>
-                                                        </td>
-                                                        <td>
-                                                            <a href="" class="btn btn-primary">Editar</a>
-                                                            <a id="<?= $tarea['id_tarea'] ?>" class="btn btn-danger borrar">Eliminar</a>
-                                                        </td>
+                                                        <th>Nombre</th>
+                                                        <th>Descripción</th>
+                                                        <th>Trabajador asociado</th>
+                                                        <th>Estado</th>
+                                                        <th>Accion</th>
                                                     </tr>
-                                                <?php endforeach; ?>
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ($datos['proyecto']['tareas'] as $tarea) : ?>
+                                                        <tr>
+                                                            <td><?= $tarea['nombre_tarea'] ?></td>
+                                                            <td><?= $tarea['descripcion_tarea'] ?></td>
+                                                            <td><?= $tarea['correo'] ?></td>
+                                                            <td>
+                                                                <?php if ($tarea['estado'] === "pendiente") : ?>
+                                                                    <span class="badge bg-warning text-accent p-2">Pendiente</span>
+                                                                <?php elseif ($tarea['estado'] === 'en_progreso') : ?>
+                                                                    <span class="badge bg-info  text-accent p-2">En progreso</span>
+                                                                <?php else : ?>
+                                                                    <span class="badge bg-success text-accent p-2 ">Completada</span>
+                                                                <?php endif; ?>
+                                                            </td>
+                                                            <td>
+                                                                <a id="<?= $tarea['id_tarea'] ?>" data-target="#editTareaModal" data-toggle="modal" class="btn btn-primary btn-edit">Editar</a>
+                                                                <a id="<?= $tarea['id_tarea'] ?>" class="btn btn-danger borrar">Eliminar</a>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card shadow mb-4 w-25" id="cardGrafica">
-                                <div class="card-header py-3 d-flex align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Porcentaje de tareas</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-center">
-                                        <canvas id="miGrafica"></canvas>
+                            <div class="col-xl-4 col-lg-5 mb-4">
+                                <div class="card shadow" id="cardGrafica">
+                                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Porcentaje de tareas</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-center">
+                                            <canvas id="miGrafica"></canvas>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -293,6 +301,41 @@ if (isset($_SESSION['exito'])) {
                             </div>
                             <div class="form-group d-flex align-items-center justify-content-center">
                                 <a class="btn btn-primary" id="agregarTarea">Agregar Tarea</a>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editTareaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Editar Tarea</h5>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="nombre" class="required">Nombre de la tarea</label>
+                                <input type="text" class="form-control" id="nombreTareaExistente" name="nombreTarea" placeholder="Nombre de la tarea">
+                            </div>
+                            <div class="form-group">
+                            </div>
+                            <div class="form-group">
+                                <label for="descripcion" class="required">Descripción</label>
+                                <textarea class="form-control" id="descripcionTareaExistente" name="descripcionTarea" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="cliente" class="required">Trabajador asociado</label>
+                                <input type="text" class="form-control" id="nombreTrabajador" name="nombreTrabajador" disabled>
+                            </div>
+                            <div class="form-group d-flex align-items-center justify-content-center">
+                                <a class="btn btn-primary" id="actualizarTarea">Actualizar Tarea</a>
                             </div>
                         </div>
                         </form>
@@ -737,6 +780,66 @@ if (isset($_SESSION['exito'])) {
                     options: options
                 });
             });
+        </script>
+
+        <script>
+            const botonesEditar = Array.from(document.querySelectorAll(".btn-edit"));
+
+            botonesEditar.forEach(b => {
+                b.onclick = (e) => {
+                    const id = e.target.id;
+                    const url = "<?= RUTA_API ?>/tarea?id=" + id;
+                    const token = getCookie('token');
+                    fetch(url, {
+                            method: "GET",
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById("nombreTareaExistente").value = data.nombre_tarea;
+                            document.getElementById("descripcionTareaExistente").value = data.descripcion_tarea;
+                            document.getElementById("nombreTrabajador").value = data.correo;
+                            document.getElementById("actualizarTarea").onclick = () => {
+                                actualizarTarea(data.id_tarea);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+            });
+
+            const actualizarTarea = async (id) => {
+                const url = "<?= RUTA_API ?>/tarea?id=" + id;
+                const nombreTarea = document.getElementById("nombreTareaExistente").value;
+                const descripcionTarea = document.getElementById("descripcionTareaExistente").value;
+                const token = getCookie('token');
+                const data = {
+                    nombre_tarea: nombreTarea,
+                    descripcion_tarea: descripcionTarea
+                }
+
+                await fetch(url, {
+                        method: "PUT",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            toastr.error(data.error, 'Error');
+                            return;
+                        }
+                        toastr.success('Tarea actualizada con éxito', 'Éxito');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    }).catch(error => console.error('Error:', error));
+            }
         </script>
     <?php endif; ?>
 </body>

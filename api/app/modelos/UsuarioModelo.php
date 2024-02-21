@@ -10,8 +10,8 @@ class UsuarioModelo
 
     public function getUsuarioById($id)
     {
-        $this->bd->query('SELECT * FROM usuarios WHERE id_usr = :id_usr');
-        $this->bd->bind(':id_usr', $id);
+        $this->bd->query('SELECT * FROM usuarios WHERE id_usuario = :id_usuario');
+        $this->bd->bind(':id_usuario', $id);
         return $this->bd->registro();
     }
 
@@ -58,22 +58,22 @@ class UsuarioModelo
             $this->bd->bind(':' . $key, $value);
         }
         return $this->bd->execute();
-        // $this->bd->query('UPDATE usuarios SET correo = :correo, username = :username, nombre = :nombre, apellidos = :apellidos, foto = :foto, es_admin = :es_admin WHERE id_usr = :id_usr');
+        // $this->bd->query('UPDATE usuarios SET correo = :correo, username = :username, nombre = :nombre, apellidos = :apellidos, foto = :foto, es_admin = :es_admin WHERE id_usuario = :id_usuario');
         // $this->bd->bind(':correo', $datos->correo);
         // $this->bd->bind(':username', $datos->username);
         // $this->bd->bind(':nombre', $datos->nombre);
         // $this->bd->bind(':apellidos', $datos->apellidos);
         // $this->bd->bind(':foto', $datos->foto);
         // $this->bd->bind(':es_admin', $datos->es_admin);
-        // $this->bd->bind(':id_usr', $datos->id_usr);
+        // $this->bd->bind(':id_usuario', $datos->id_usuario);
 
         // return $this->bd->execute();
     }
     public function updateClave($datos)
     {
-        $this->bd->query('UPDATE usuarios SET clave = :clave WHERE id_usr = :id_usr');
+        $this->bd->query('UPDATE usuarios SET clave = :clave WHERE id_usuario = :id_usuario');
         $this->bd->bind(':clave', $datos->clave);
-        $this->bd->bind(':id_usr', $datos->id_usr);
+        $this->bd->bind(':id_usuario', $datos->id_usuario);
 
         return $this->bd->execute();
     }
@@ -96,8 +96,8 @@ class UsuarioModelo
 
     public function deleteUsuario($id_usuario)
     {
-        $this->bd->query('DELETE FROM usuarios WHERE id_usr = :id_usr');
-        $this->bd->bind(':id_usr', $id_usuario);
+        $this->bd->query('DELETE FROM usuarios WHERE id_usuario = :id_usuario');
+        $this->bd->bind(':id_usuario', $id_usuario);
         return $this->bd->execute();
     }
 }

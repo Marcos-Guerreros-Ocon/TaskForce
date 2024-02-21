@@ -14,7 +14,10 @@ class TareaModelo
     }
     public function getTarea($id)
     {
-        $this->bd->query('SELECT t.id_tarea,t.nombre_tarea ,t.descripcion_tarea,p.id_proyecto,p.nombre, p.id_usuario as "id_gestor",t.nombre_tarea,t.descripcion_tarea, t.estado FROM tareas t JOIN proyectos p ON t.id_proyecto = p.id_proyecto WHERE t.id_tarea = :id_tarea');
+        $this->bd->query('SELECT t.id_tarea,t.nombre_tarea ,t.descripcion_tarea,t.id_usuario, u.correo ,p.id_proyecto,p.nombre, p.id_usuario as "id_gestor",t.nombre_tarea,t.descripcion_tarea, t.estado FROM tareas t 
+        JOIN proyectos p ON t.id_proyecto = p.id_proyecto
+        JOIN usuarios u ON t.id_usuario = u.id_usuario
+        WHERE t.id_tarea = :id_tarea');
         $this->bd->bind(':id_tarea', $id);
         return $this->bd->registro();
     }
@@ -57,7 +60,7 @@ class TareaModelo
         return $this->bd->lastInsertId();
     }
 
-    public function updateTarea($datos)
+    public function updateTarea($idTarea, $datos)
     {
         $sql = 'UPDATE tareas SET ';
         foreach ($datos as $key => $value) {
@@ -69,9 +72,10 @@ class TareaModelo
         foreach ($datos as $key => $value) {
             $this->bd->bind(':' . $key, $value);
         }
+        $this->bd->bind(':id_tarea', $idTarea);
         $this->bd->execute();
 
-        return $this->getTarea($datos['id_tarea']);
+        return $this->getTarea($idTarea);
     }
     public function deleteTarea($id)
     {

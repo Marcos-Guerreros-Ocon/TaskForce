@@ -132,11 +132,11 @@ class Tarea extends Controlador
         $idTarea = $tarea->addTarea($datos);
         echo json_encode(['id_tarea' => $idTarea]);
     }
-    private function updateTarea()
+    private function updateTarea($idTarea)
     {
         $tarea = $this->modelo('TareaModelo');
         $datos = json_decode(file_get_contents('php://input'), true);
-        $tarea = $tarea->updateTarea($datos);
+        $tarea = $tarea->updateTarea($idTarea, $datos);
         header('Content-Type: application/json', true, 200);
         echo json_encode($tarea);
     }
