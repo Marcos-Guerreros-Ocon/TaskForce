@@ -37,9 +37,6 @@ if (isset($datos['proyecto'])) {
     }
 }
 
-
-
-
 $exito = false;
 if (isset($datos['exito'])) {
     $exito = $datos['exito'];
@@ -60,6 +57,7 @@ if (isset($_SESSION['exito'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <link rel="icon" type="image/png" href="<?= RUTA_URL ?>/public/img/logo.png" />
 
     <title>Task Force</title>
 
@@ -252,23 +250,7 @@ if (isset($_SESSION['exito'])) {
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Add Tarea Modal-->
     <?php if (isset($datos['proyecto'])) : ?>
@@ -345,6 +327,8 @@ if (isset($_SESSION['exito'])) {
         </div>
     <?php endif; ?>
 
+
+    <?php require_once RUTA_APP . '/vistas/inc/modalLogout.php'; ?>
 
     <!-- Bootstrap core JavaScript-->
     <script src="<?= RUTA_URL ?>/public/js/jquery/jquery.min.js"></script>
@@ -783,63 +767,65 @@ if (isset($_SESSION['exito'])) {
         </script>
 
         <script>
-            const botonesEditar = Array.from(document.querySelectorAll(".btn-edit"));
+            window.onload = () => {
+                const botonesEditar = Array.from(document.querySelectorAll(".btn-edit"));
 
-            botonesEditar.forEach(b => {
-                b.onclick = (e) => {
-                    const id = e.target.id;
+                botonesEditar.forEach(b => {
+                    b.onclick = (e) => {
+                        const id = e.target.id;
+                        const url = "<?= RUTA_API ?>/tarea?id=" + id;
+                        const token = getCookie('token');
+                        fetch(url, {
+                                method: "GET",
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                document.getElementById("nombreTareaExistente").value = data.nombre_tarea;
+                                document.getElementById("descripcionTareaExistente").value = data.descripcion_tarea;
+                                document.getElementById("nombreTrabajador").value = data.correo;
+                                document.getElementById("actualizarTarea").onclick = () => {
+                                    actualizarTarea(data.id_tarea);
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
+                    }
+                });
+
+                const actualizarTarea = async (id) => {
                     const url = "<?= RUTA_API ?>/tarea?id=" + id;
+                    const nombreTarea = document.getElementById("nombreTareaExistente").value;
+                    const descripcionTarea = document.getElementById("descripcionTareaExistente").value;
                     const token = getCookie('token');
-                    fetch(url, {
-                            method: "GET",
+                    const data = {
+                        nombre_tarea: nombreTarea,
+                        descripcion_tarea: descripcionTarea
+                    }
+
+                    await fetch(url, {
+                            method: "PUT",
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${token}`
-                            }
+                            },
+                            body: JSON.stringify(data)
                         })
                         .then(response => response.json())
                         .then(data => {
-                            document.getElementById("nombreTareaExistente").value = data.nombre_tarea;
-                            document.getElementById("descripcionTareaExistente").value = data.descripcion_tarea;
-                            document.getElementById("nombreTrabajador").value = data.correo;
-                            document.getElementById("actualizarTarea").onclick = () => {
-                                actualizarTarea(data.id_tarea);
+                            if (data.error) {
+                                toastr.error(data.error, 'Error');
+                                return;
                             }
-                        })
-                        .catch(error => console.error('Error:', error));
+                            toastr.success('Tarea actualizada con éxito', 'Éxito');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        }).catch(error => console.error('Error:', error));
                 }
-            });
-
-            const actualizarTarea = async (id) => {
-                const url = "<?= RUTA_API ?>/tarea?id=" + id;
-                const nombreTarea = document.getElementById("nombreTareaExistente").value;
-                const descripcionTarea = document.getElementById("descripcionTareaExistente").value;
-                const token = getCookie('token');
-                const data = {
-                    nombre_tarea: nombreTarea,
-                    descripcion_tarea: descripcionTarea
-                }
-
-                await fetch(url, {
-                        method: "PUT",
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            toastr.error(data.error, 'Error');
-                            return;
-                        }
-                        toastr.success('Tarea actualizada con éxito', 'Éxito');
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    }).catch(error => console.error('Error:', error));
-            }
+            };
         </script>
     <?php endif; ?>
 </body>

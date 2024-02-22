@@ -13,6 +13,7 @@ class Usuario extends Controlador
         $token = new Token();
         if (!$token->isLogin()) {
             header("Content-Type: application/json", true, 401);
+            echo json_encode(['mensaje' => 'No autorizado']);
             exit;
         }
 
@@ -21,8 +22,8 @@ class Usuario extends Controlador
             return;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id_usr'])) {
-            $id = $_GET['id_usr'] ?? null;
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id_usuario'])) {
+            $id = $_GET['id_usuario'] ?? null;
             $this->getUsuarioById($id);
             return;
         }
@@ -33,10 +34,11 @@ class Usuario extends Controlador
 
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
             $this->updateUsuario();
+            return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-            $id = $_GET['id_usr'] ?? null;
+            $id = $_GET['id_usuario'] ?? null;
             $this->deleteUsuario($id);
         }
     }
@@ -299,40 +301,25 @@ class Usuario extends Controlador
         $usuarioModelo = $this->modelo('UsuarioModelo');
 
         // Coger datos del body
-        $json = file_get_contents('php://input');
-        $data = json_decode($json);
+        $datos = json_decode(file_get_contents('php://input'), true);
 
-        if ($data === 'null') {
+        if ($datos === 'null') {
             header('Content-Type: application/json', true, 400);
             echo json_encode(['mensaje' => 'Faltan datos para actualizar el usuario']);
             return;
         }
 
-        if (!isset($data->id_usr) || !isset($data->correo) || !isset($data->username) || !isset($data->clave) || !isset($data->nombre) || !isset($data->apellidos)) {
-            header('Content-Type: application/json', true, 400);
-            echo json_encode(['mensaje' => 'Faltan datos para actualizar el usuario']);
-            return;
-        }
-
-        $user = $usuarioModelo->getUsuarioById($data->id_usr);
+        $user = $usuarioModelo->getUsuarioById($datos['id_usuario']);
         if (!$user) {
             header('Content-Type: application/json', true, 400);
             echo json_encode(['mensaje' => 'El usuario no existe']);
             return;
         }
 
-        if (!isset($data->foto) && $user->foto === null) {
-            $data->foto = null;
-        }
 
-
-        if (!isset($data->es_admin)) {
-            $data->es_admin = false;
-        }
-
-        $userCorreo = $usuarioModelo->getUsuarioByCorreo($data->correo);
+        $userCorreo = $usuarioModelo->getUsuarioByCorreo($datos['correo']);
         if ($userCorreo) {
-            if ($userCorreo->id_usr !== $data->id_usr) {
+            if ($userCorreo->id_usuario !== $datos['id_usuario']) {
                 header('Content-Type: application/json', true, 400);
                 echo json_encode(['mensaje' => 'El correo ya esta en uso']);
                 return;
@@ -340,29 +327,19 @@ class Usuario extends Controlador
         }
 
 
-        $userUsername = $usuarioModelo->getUserByUsername($data->username);
-        if ($userUsername && $userUsername->id_usr !== $data->id_usr) {
-
+        $userUsername = $usuarioModelo->getUserByUsername($datos['username']);
+        if ($userUsername && $userUsername->id_usuario !== $datos['id_usuario']) {
             header('Content-Type: application/json', true, 400);
             echo json_encode(['mensaje' => 'El usuario ya existe']);
             return;
         }
 
-        $usario = $usuarioModelo->updateUsuario($data);
+        $usario = $usuarioModelo->updateUsuario($datos);
         if (!$usario) {
             header('Content-Type: application/json', true, 400);
             echo json_encode(['mensaje' => 'Error al actualizar el usuario']);
             return;
         }
-        if (isset($data->clave)) {
-            $usario = $usuarioModelo->updateClave($data);
-            if (!$usario) {
-                header('Content-Type: application/json', true, 400);
-                echo json_encode(['mensaje' => 'Error al actualizar el usuario']);
-                return;
-            }
-        }
-
 
         header('Content-Type: application/json', true, 200);
         echo json_encode($usario);

@@ -10,11 +10,15 @@
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?= $_SESSION['user']['username'] ?></span>
-                <img class="img-profile rounded-circle" src="<?= RUTA_URL ?>/public/img/usr/blank_user.webp">
+                <?php if ($_SESSION['user']['ruta_foto_perfil']) : ?>
+                    <img class="img-profile rounded-circle" src="<?= RUTA_URL ?>/<?= $_SESSION['user']['ruta_foto_perfil'] ?>">
+                <?php else : ?>
+                    <img class="img-profile rounded-circle" src="<?= RUTA_URL ?>/public/img/usr/blank_user.webp">
+                <?php endif; ?>
             </a>
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="<?= RUTA_URL ?>/usuario/perfil">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Profile
                 </a>

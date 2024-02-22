@@ -6,9 +6,6 @@ class Usuario extends Controlador
     private $token;
     public function __construct()
     {
-        if (isset($_COOKIE['token'])) {
-            $this->token = $_COOKIE['token'];
-        }
     }
 
     public function index()
@@ -57,8 +54,9 @@ class Usuario extends Controlador
         $datos = json_decode($response, true);
         $session->set('token', $datos['token']);
 
-        setcookie('token', $datos['token'], time() + 1 * 60 * 60, '/');
+        setcookie('token', $datos['token'],  time() + 3600, '/');
         $session->set('user', $datos['usuario']);
+        $session->set('token', $datos['token']);
 
         header('Location: ' . RUTA_URL . '/dashboard');
         return;
@@ -82,6 +80,9 @@ class Usuario extends Controlador
     {
         $session = new SessionManager();
         $session->destroy();
+        setcookie('token', '', time() - 3600, '/');
+        unset($_COOKIE['token']);
+
         header('Location: ' . RUTA_URL);
     }
 
@@ -93,21 +94,31 @@ class Usuario extends Controlador
             return;
         }
 
-        $data['usuario'] = $session->get('user');
-
-        $this->vista('usuario/perfil', $data);
-    }
-    public function actualizar()
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ' . RUTA_URL);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->actualizar();
             return;
         }
 
-        $session = new SessionManager();
-        $usuarioLogueado = $session->get('user');
+        $this->token = $_COOKIE['token'];
 
-        $id = $usuarioLogueado['id_usr'];
+        $data =
+            [
+                'usuario' => $session->get('user'),
+                'pag_actual' => 'perfil'
+            ];
+
+        $this->vista('usuario/perfil', $data);
+    }
+    private function actualizar()
+    {
+
+
+        $session = new SessionManager();
+
+        $usuarioLogueado = $session->get('user');
+        $token = $session->get('token');
+
+        $id = $usuarioLogueado['id_usuario'];
         $nombre = $_POST['nombre'];
         $apellidos = $_POST['apellidos'];
         $usuario = $_POST['usuario'];
@@ -116,51 +127,47 @@ class Usuario extends Controlador
         $pwdValid = $_POST['pwdValid'] ?? '';
         $foto = $_FILES['foto'] ?? null;
 
+        $this->token = $usuarioLogueado['token'];
+
         $data['usuario'] = [
-            'id_usr' => $usuarioLogueado['id_usr'],
+            'id_usuario' => $usuarioLogueado['id_usuario'],
             'nombre' => $nombre,
             'apellidos' => $apellidos,
             'username' => $usuario,
-            'correo' => $correo,
-            'foto' => $foto,
-            'clave' => $usuarioLogueado['clave'],
-            'es_admin' => $usuarioLogueado['es_admin'] ? '1' : '0'
+            'correo' => $correo
         ];
 
         $fotoSubida = null;
-        // SI NO SE HA CAMBIADO LA FOTO Y EL USUARIO YA TENIA UNA
-        if (isset($usuarioLogueado['foto']) && $foto['name'] === '') {
-            $fotoSubida = $usuarioLogueado['foto'];
-        }
+        $fotoBD = isset($usuarioLogueado['ruta_foto_perfil']) ? $usuarioLogueado['ruta_foto_perfil'] : null;
 
         // SI SE HA CAMBIADO LA FOTO Y EL USUARIO YA TENIA UNA
-        if (isset($usuarioLogueado['foto']) && $foto['name'] !== '') {
+        if ($fotoBD !== null && $foto['name'] !== '') {
             if (!$this->checkImg($foto['name'])) {
                 $error = 'La imagen no es valida';
                 $data['error'] = $error;
-                $data['usuario']['foto'] = $usuarioLogueado['foto'];
+                $data['usuario']['ruta_foto_perfil'] = $usuarioLogueado['foto'];
                 $this->vista('usuario/perfil', $data);
                 return;
             }
-            if (!$this->quitarFoto($usuarioLogueado['foto'])) {
+            if (!$this->quitarFoto($usuarioLogueado['ruta_foto_perfil'])) {
                 $error = 'Error al quitar la foto';
                 $data['error'] = $error;
-                $data['usuario']['foto'] = $usuarioLogueado['foto'];
+                $data['usuario']['ruta_foto_perfil'] = $usuarioLogueado['ruta_foto_perfil'];
                 $this->vista('usuario/perfil', $data);
                 return;
             }
             if (!$this->subirImagen($id)) {
                 $error = 'Error al subir la imagen';
                 $data['error'] = $error;
-                $data['usuario']['foto'] = '';
+                $data['usuario']['ruta_foto_perfil'] = '';
                 $this->vista('usuario/perfil', $data);
                 return;
             }
-            $fotoSubida =   'public/img/usr/' . $usuarioLogueado['id_usr'] . '.' . pathinfo($foto['name'], PATHINFO_EXTENSION);
+            $fotoSubida =   'public/img/usr/' . $usuarioLogueado['id_usuario'] . '.' . pathinfo($foto['name'], PATHINFO_EXTENSION);
         }
 
         // SI SE HA CAMBIADO LA FOTO Y EL USUARIO NO TENIA UNA
-        if (!isset($usuarioLogueado['foto'])  && $foto['name'] !== '') {
+        if ($fotoBD === null  && $foto['name'] !== "") {
             if (!$this->subirImagen($id)) {
                 $error = 'Error al subir la imagen';
                 $data['error'] = $error;
@@ -168,79 +175,52 @@ class Usuario extends Controlador
                 $this->vista('usuario/perfil', $data);
                 return;
             }
-            $fotoSubida = 'public/img/usr/' . $usuarioLogueado['id_usr'] . '.' . pathinfo($foto['name'], PATHINFO_EXTENSION);
+            $fotoSubida = 'public/img/usr/' . $usuarioLogueado['id_usuario'] . '.' . pathinfo($foto['name'], PATHINFO_EXTENSION);
         }
-
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, RUTA_API . 'usuario/correo/' . $correo);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $response = curl_exec($ch);
-        $response = json_decode($response, true);
-
-        if ($response['id_usr'] !== $usuarioLogueado['id_usr']) {
-            $error = 'El correo ya esta en uso';
-            $data['error'] = $error;
-            $this->vista('usuario/perfil', $data);
-            return;
-        }
-        curl_close($ch);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, RUTA_API . 'usuario/username/' . $usuario);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $response = curl_exec($ch);
-        $response = json_decode($response, true);
-
-        if ($response['id_usr'] !== $usuarioLogueado['id_usr']) {
-            $error = 'El nombre de usuario ya esta en uso';
-            $data['error'] = $error;
-            $this->vista('usuario/perfil', $data);
-            return;
-        }
-
-        $aux = '';
-        curl_close($ch);
-        if ($pwd !== '' && $pwdValid !== '' && $pwd === $pwdValid) {
-            $aux = $pwd;
-            $usuarioLogueado['clave'] = md5($pwd);
-        }
-
 
         $datosActualizar = [
-            'id_usr' => $usuarioLogueado['id_usr'],
+            'id_usuario' => $usuarioLogueado['id_usuario'],
             'nombre' => $nombre,
             'apellidos' => $apellidos,
             'username' => $usuario,
-            'correo' => $correo,
-            'foto' => $fotoSubida,
-            'clave' => $usuarioLogueado['clave'],
-            'es_admin' => $usuarioLogueado['es_admin'] ? '1' : '0'
+            'correo' => $correo
         ];
 
-
-        if ($pwd !== '' && $pwdValid !== '') {
+        if ($pwd !== '' && $pwdValid !== '' && $pwd === $pwdValid) {
+            $usuarioLogueado['clave'] = md5($pwd);
             $datosActualizar['clave'] = md5($pwd);
         }
-        $datosActualizar =  json_encode($datosActualizar);
+        if ($fotoSubida !== null) {
+            $datosActualizar['ruta_foto_perfil'] = $fotoSubida;
+            $usuarioLogueado['ruta_foto_perfil'] = $fotoSubida;
+        }
 
+        $url = RUTA_API . 'usuario';
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, RUTA_API . 'usuario');
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $token));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $datosActualizar);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($datosActualizar));
         $response = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if ($status === 401) {
+            $session->destroy();
+            setcookie("token", "", time() - 3600);
+            unset($_COOKIE['token']);
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
         curl_close($ch);
 
         if (!$response) {
-            $error = "Error al actualizar los datos";
-            $data["error"] = $error;
-            $data['usuario'] = $usuarioLogueado;
+            $data = [
+                'pag_actual' => 'perfil',
+                'usuario' => $usuarioLogueado,
+                'error' => 'Error al actualizar los datos',
+            ];
+
             $this->vista('usuario/perfil', $data);
             return;
         }
@@ -255,11 +235,13 @@ class Usuario extends Controlador
         $session->set('user', $usuario);
         $data = $session->get('user');
         $data = [
+            'pag_actual' => 'perfil',
             'usuario' => $data,
-            'exito' => true,
+            'exito' => 'Datos actualizados con éxito',
         ];
 
 
+        $session->set('user', $usuario);
         $this->vista('usuario/perfil', $data);
     }
 

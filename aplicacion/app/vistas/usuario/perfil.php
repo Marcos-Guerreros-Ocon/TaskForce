@@ -1,118 +1,175 @@
 <?php
-$a = isset($datos['exito']) ? $datos['exito'] : 'false';
-?>
+$exito = '';
+if (isset($datos['exito'])) {
+    $exito = $datos['exito'];
+    unset($datos['exito']);
+} ?>
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogroFilm</title>
-    <link rel="shortcut icon" href="<?= RUTA_URL ?>/public/img/logo.png" type="image/x-icon">
-    <link href="<?= RUTA_URL . '/' ?>public/css/bootstrap/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= RUTA_URL . '/' ?>public/css/estilos.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" href="<?= RUTA_URL ?>/public/img/logo.png" />
+
+    <title>Task Force</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="<?= RUTA_URL ?>/public/css/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="<?= RUTA_URL ?>/public/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= RUTA_URL ?>/public/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
     <style>
-        .required::after {
-            content: ' *';
-            color: red;
+        .img-max {
+            max-width: 300px;
+            width: 100%;
+            height: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            object-position: top;
+            border: 1px solid #dddfeb !important;
+            border-radius: 0.35rem;
+        }
+
+        input[type="file"] {
+            width: 204px;
         }
     </style>
 </head>
 
-<body>
-    <div id="main">
-        <?php include_once(RUTA_APP . '/vistas/inc/cabecera.php') ?>
-        <main class="container mt-5">
-            <div class="article card ">
-                <form id="datos" action="<?= RUTA_URL ?>/usuario/actualizar" method="post" class="p-5 d-block flex-column justify-content-center align-items-center" enctype="multipart/form-data">
-                    <div class="d-flex flex-column flex-lg-row">
-                        <div class="w-lg-25  mx-lg-5">
-                            <?php if (isset($datos['usuario']['foto']) && $datos['usuario']['foto'] !== '') : ?>
-                                <img src="<?= RUTA_URL . '/' . $datos['usuario']['foto'] ?>" alt="" class="w-100 mb-3 shadow-lg">
-                            <?php else : ?>
-                                <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" alt="" class="w-100 mb-3 shadow-lg">
-                            <?php endif; ?>
-                            <div class="input-group mb-3">
-                                <input type="file" name="foto" class="form-control" id="inputGroupFile02">
-                            </div>
-                        </div>
-                        <div class="w-lg-50 mx-lg-5">
-                            <div class="form-group">
-                                <label for="nombre" class="required">Nombre</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="nombre" value="<?= $datos['usuario']['nombre'] ?>" required>
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <?php require_once RUTA_APP . '/vistas/inc/sidebar.php'; ?>
+        <!-- End of Sidebar -->
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <?php require_once RUTA_APP . '/vistas/inc/topbar.php'; ?>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item "><a href="<?= RUTA_URL ?>/usuario/perfil">Mi perfil</a></li>
+                                <li class="breadcrumb-item active"><a href="#">Editar perfil</a></li>
+                            </ol>
+                        </nav>
+                    </div>
+
+                    <div class="row justify-content-center">
+                        <div class="col-xl-8 col-lg-7 mb-4">
+                            <div class="card shadow">
+                                <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Mi perfil</h6>
+                                    <a class="btn btn-secondary" href="<?= RUTA_URL ?>/dashboard"><i class="fa fa-arrow-left"></i> Volver</a>
+                                </div>
+                                <div class="card-body">
+                                    <form method="POST" enctype='multipart/form-data'>
+                                        <div class="row">
+                                            <div class="col-12 col-lg-6 d-flex  flex-column align-items-center">
+                                                <?php if ($datos['usuario']['ruta_foto_perfil'] !== null) : ?>
+                                                    <img src="<?= RUTA_URL ?>/<?= $datos['usuario']['ruta_foto_perfil'] ?>" alt="" id="img-usuario" class="img-max img-fluid img-thumbnail">
+                                                <?php else : ?>
+                                                    <img src="<?= RUTA_URL ?>/public/img/usr/blank_user.webp" alt="" class="img-max img-fluid img-thumbnail" id="img-usuario">
+                                                <?php endif; ?>
+                                                <input type="file" class="form-control" id="foto" name="foto" accept="image/png, image/jpeg">
+                                            </div>
+                                            <div class="col-12 col-lg-6">
+                                                <div class="form-group" id="nombre">
+                                                    <label for="nombre">Nombre</label>
+                                                    <input type="text" class="form-control" id="nombre" name="nombre" value="<?= $datos['usuario']['nombre'] ?>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="apellidos">Apellidos</label>
+                                                    <input type="text" class="form-control" id="apellidos" name="apellidos" value="<?= $datos['usuario']['apellidos'] ?>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="usuario">Usuario</label>
+                                                    <input type="text" class="form-control" id="usuario" name="usuario" value="<?= $datos['usuario']['username'] ?>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="correo">Correo</label>
+                                                    <input type="email" class="form-control" id="correo" name="correo" value="<?= $datos['usuario']['correo'] ?>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="pwd">Contraseña</label>
+                                                    <input type="password" class="form-control" id="pwd" name="pwd">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="pwdValid">Confirmar contraseña</label>
+                                                    <input type="password" class="form-control" id="pwdValid" name="pwdValid">
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Actualizar</button>
+                                            </div>
+
+                                        </div>
+                                    </form>
+
+                                </div>
 
                             </div>
-                            <div class="form-group">
-                                <label for="apellidos" class="required">Apellidos</label>
-                                <input type="text" class="form-control" id="apellidos" name="apellidos" placeholder="apellidos" value="<?= $datos['usuario']['apellidos'] ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="usuario" class="required">Usuario</label>
-                                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="usuario" value="<?= $datos['usuario']['username'] ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="correo" class="required">Correo</label>
-                                <input type="email" class="form-control" id="correo" name="correo" placeholder="correo@correo.com" value="<?= $datos['usuario']['correo'] ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="pwd">Contraseña</label>
-                                <input type="password" class="form-control" id="pwd" name="pwd">
-                            </div>
-                            <div class="form-group">
-                                <label for="pwd">Confirmar Contraseña</label>
-                                <input type="password" class="form-control" id="pwdValid" name="pwdValid">
-                            </div>
-
                         </div>
                     </div>
-                    <div class="d-flex align-items-center justify-content-center mt-5">
-                        <a href="<?= RUTA_URL ?>" class="btn btn-secondary">Volver</a>
-                        <button type="submit" class="btn btn-primary mx-2">Actualizar</button>
-                    </div>
-                </form>
+
+                </div>
+                <!-- /.container-fluid -->
+
             </div>
-    </div>
+            <!-- End of Main Content -->
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+            <!-- Footer -->
+            <?php require_once RUTA_APP . '/vistas/inc/footer.php'; ?>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <?php require_once RUTA_APP . '/vistas/inc/modalLogout.php'; ?>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="<?= RUTA_URL ?>/public/js/jquery/jquery.min.js"></script>
+    <script src="<?= RUTA_URL ?>/public/js/bootstrap/bootstrap.bundle.min.js"></script>
+
+
+    <!-- Core plugin JavaScript-->
+    <script src="<?= RUTA_URL ?>/public/js/jquery-easing/jquery.easing.min.js"></script>
+
+
+    <!-- Custom scripts for all pages-->
+    <script src="<?= RUTA_URL ?>/public/js/sb-admin-2.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
     <script>
-        const form = document.getElementById('datos');
-
-        const isValidForm = () => {
-            const nombre = document.getElementById('nombre').value;
-            const apellidos = document.getElementById('apellidos').value;
-            const usuario = document.getElementById('usuario').value;
-            const correo = document.getElementById('correo').value;
-            const pwd = document.getElementById('pwd').value;
-            const pwdValid = document.getElementById('pwdValid').value;
-
-            if (nombre === '' || apellidos === '' || usuario === '' || correo === '') {
-                return false;
-            }
-            if (pwd !== pwdValid) {
-                return false;
-            }
-
-            return true;
-        }
-
-        form.onsubmit = (e) => {
-            if (!isValidForm()) {
-                e.preventDefault();
-                form.classList.add('was-validated');
-                return false;
-            }
-            return true;
-        }
         toastr.options = {
             "closeButton": false,
             "debug": false,
             "newestOnTop": false,
-            "progressBar": false,
-            "positionClass": "toast-bottom-right",
+            "progressBar": true,
+            "positionClass": "toast-top-right",
             "preventDuplicates": false,
             "onclick": null,
             "showDuration": "300",
@@ -123,19 +180,37 @@ $a = isset($datos['exito']) ? $datos['exito'] : 'false';
             "hideEasing": "linear",
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
-        };
+        }
 
-        <?php if (isset($datos['exito'])) : ?>
-            toastr["success"]("Todo Bien", "Exito");
+        <?php if ($exito) : ?>
+            toastr.success('<?= $exito ?>', 'Éxito');
         <?php endif; ?>
         <?php if (isset($datos['error'])) : ?>
-            toastr["error"]("<?= $datos['error'] ?>", "Error");
+            toastr.error('<?= $datos['error'] ?>', 'Error');
         <?php endif; ?>
     </script>
+    <script>
+        document.querySelector('#foto').addEventListener('change', function() {
+            const reader = new FileReader();
 
+            var file = this.files[0];
 
-    </main>
-    <?php include_once(RUTA_APP . '/vistas/inc/footer.php'); ?>
+            if (!file.type.match('image.*')) {
+                toastr.error('El archivo seleccionado no es una imagen', 'Error');
+                document.querySelector('#foto').value = '';
+                return;
+            }
+
+            reader.onload = function() {
+                document.querySelector('#img-usuario').src = reader.result;
+            }
+
+            if (this.files[0]) {
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    </script>
+
 </body>
 
 </html>

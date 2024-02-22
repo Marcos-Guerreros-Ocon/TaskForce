@@ -1,7 +1,7 @@
 <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?= RUTA_URL ?> /dashboard">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?= RUTA_URL ?>/dashboard">
         <div class="sidebar-brand-icon">
             <img src="<?= RUTA_URL ?> /public/img/logo.png" class="img-thumbnail" alt="" srcset="">
         </div>
@@ -13,7 +13,7 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item <?php if ($datos['pag_actual'] == 'dashboard') : ?> active <?php endif; ?>">
-        <a class="nav-link" href="<?= RUTA_URL ?> /dashboard">
+        <a class="nav-link" href="<?= RUTA_URL ?>/dashboard">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>

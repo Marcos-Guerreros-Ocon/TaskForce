@@ -12659,3 +12659,18 @@ body.sidebar-toggled footer.sticky-footer {
 .text-accent {
     color: var(--primary);
 }
+
+#dataTable {
+    tbody td:hover {
+        cursor: pointer;
+    }
+
+    tbody tr {
+        transition: all 0.25s;
+    }
+
+    tbody tr:hover {
+        color: black;
+        background: #b9b9b9 !important;
+    }
+}

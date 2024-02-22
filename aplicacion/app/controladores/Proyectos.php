@@ -103,6 +103,8 @@ class Proyectos extends Controlador
         if ($status === 401) {
             $sessionManager = new SessionManager();
             $sessionManager->destroy();
+            setcookie('token', '', time() - 3600, '/');
+            unset($_COOKIE['token']);
             header('location:' . RUTA_URL . '/usuario');
             return;
         }
