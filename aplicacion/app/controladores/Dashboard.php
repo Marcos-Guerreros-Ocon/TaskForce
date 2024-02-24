@@ -6,7 +6,7 @@ class Dashboard extends Controlador
     {
 
         if (!isset($_COOKIE['token'])) {
-            header('Location: ' . RUTA_URL . '/login');
+            header('Location: ' . RUTA_URL . '/usuario');
             return;
         }
         $this->token = $_COOKIE['token'];
@@ -16,7 +16,7 @@ class Dashboard extends Controlador
     {
         $session = new SessionManager();
         if (!$session->has('user')) {
-            header('Location: ' . RUTA_URL . '/login');
+            header('Location: ' . RUTA_URL . '/usuario');
             return;
         }
         $data = [

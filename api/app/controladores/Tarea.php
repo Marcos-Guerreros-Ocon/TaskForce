@@ -87,13 +87,6 @@ class Tarea extends Controlador
             exit;
         }
 
-
-
-        if ($rol === 'admin' && $tarea->id_gestor !== $idUsuario && !$admin) {
-            header('Content-Type: application/json', true, 404);
-            echo json_encode(['mensaje' => 'La tarea no existe']);
-            return;
-        }
         header('Content-Type: application/json', true, 200);
         echo json_encode($tarea);
     }

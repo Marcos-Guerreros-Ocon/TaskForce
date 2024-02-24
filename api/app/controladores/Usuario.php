@@ -262,6 +262,11 @@ class Usuario extends Controlador
         $usuarioModelo = $this->modelo('UsuarioModelo');
         $usuario = $usuarioModelo->getUsuarioByCorreo($correo);
 
+        if (!$usuario) {
+            header('Content-Type: application/json', true, 404);
+            echo json_encode(['mensaje' => 'El usuario no existe']);
+            return;
+        }
 
         header('Content-Type: application/json', true, 200);
         echo json_encode($usuario);

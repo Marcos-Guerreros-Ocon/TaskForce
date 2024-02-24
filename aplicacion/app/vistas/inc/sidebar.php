@@ -51,8 +51,8 @@
             Administración
         </div>
         <!-- Nav Item - Charts -->
-        <li class="nav-item">
-            <a class="nav-link" href="charts.html">
+        <li class="nav-item <?php if ($datos['pag_actual'] == 'backoffice/proyectos') : ?> active <?php endif; ?>">
+            <a class="nav-link" href="<?= RUTA_URL ?>/backoffice/proyectos">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Proyectos</span>
             </a>

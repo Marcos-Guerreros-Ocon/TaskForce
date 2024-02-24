@@ -104,7 +104,7 @@ if (isset($datos['exito'])) {
                                         </select>
                                     </div>
                                     <div class="d-flex align-items-center justify-content-center">
-                                        <button class="btn btn-primary" type="submit"><i class="fa fa-pen mr-1"></i> Actualizar Proyecto</button>
+                                        <button class="btn btn-primary" type="submit"><i class="fa fa-pen mr-1"></i> Actualizar Tarea</button>
 
                                     </div>
                                 </form>

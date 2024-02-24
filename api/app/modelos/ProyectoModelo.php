@@ -14,7 +14,7 @@ class ProyectoModelo
     }
     public function getProyectoById($id)
     {
-        $this->bd->query('SELECT * FROM proyectos WHERE id_proyecto = :id_proyecto');
+        $this->bd->query('SELECT p.*, u.correo FROM proyectos p JOIN usuarios u ON p.id_usuario = u.id_usuario WHERE id_proyecto = :id_proyecto');
         $this->bd->bind(':id_proyecto', $id);
         return $this->bd->registro();
     }
