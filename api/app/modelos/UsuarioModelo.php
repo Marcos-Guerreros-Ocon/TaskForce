@@ -57,17 +57,9 @@ class UsuarioModelo
         foreach ($datos as $key => $value) {
             $this->bd->bind(':' . $key, $value);
         }
-        return $this->bd->execute();
-        // $this->bd->query('UPDATE usuarios SET correo = :correo, username = :username, nombre = :nombre, apellidos = :apellidos, foto = :foto, es_admin = :es_admin WHERE id_usuario = :id_usuario');
-        // $this->bd->bind(':correo', $datos->correo);
-        // $this->bd->bind(':username', $datos->username);
-        // $this->bd->bind(':nombre', $datos->nombre);
-        // $this->bd->bind(':apellidos', $datos->apellidos);
-        // $this->bd->bind(':foto', $datos->foto);
-        // $this->bd->bind(':es_admin', $datos->es_admin);
-        // $this->bd->bind(':id_usuario', $datos->id_usuario);
+        $this->bd->execute();
 
-        // return $this->bd->execute();
+        return $this->getUsuarioById($datos['id_usuario']);
     }
     public function updateClave($datos)
     {
@@ -79,14 +71,14 @@ class UsuarioModelo
     }
     public function addUsuario($datos)
     {
-        $this->bd->query('INSERT INTO usuarios (correo, username, clave, nombre, apellidos, foto,es_admin) VALUES ( :correo, :username, :clave, :nombre, :apellidos, :foto, :es_admin)');
+        $this->bd->query('INSERT INTO usuarios (correo, username, nombre, apellidos, clave,ruta_foto_perfil,rol) VALUES ( :correo, :username, :nombre, :apellidos,  :clave,:ruta_foto_perfil, :rol)');
         $this->bd->bind(':correo', $datos->correo);
         $this->bd->bind(':username', $datos->username);
-        $this->bd->bind(':clave', $datos->clave);
         $this->bd->bind(':nombre', $datos->nombre);
         $this->bd->bind(':apellidos', $datos->apellidos);
-        $this->bd->bind(':foto', $datos->foto);
-        $this->bd->bind(':es_admin', $datos->es_admin);
+        $this->bd->bind(':clave', $datos->clave);
+        $this->bd->bind(':ruta_foto_perfil', $datos->ruta_foto_perfil);
+        $this->bd->bind(':rol', $datos->rol);
 
         if (!$this->bd->execute()) {
             return false;

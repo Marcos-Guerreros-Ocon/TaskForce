@@ -70,8 +70,8 @@
                 <span>Comentarios</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="tables.html">
+        <li class="nav-item <?php if ($datos['pag_actual'] == 'backoffice/usuarios') : ?> active <?php endif; ?>">
+            <a class="nav-link" href="<?= RUTA_URL ?>/backoffice/usuarios">
                 <i class="fas fa-fw fa-user"></i>
                 <span>Usuarios</span>
             </a>

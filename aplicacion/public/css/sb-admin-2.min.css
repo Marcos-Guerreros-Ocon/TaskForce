@@ -12674,3 +12674,9 @@ body.sidebar-toggled footer.sticky-footer {
         background: #b9b9b9 !important;
     }
 }
+
+.msg-error {
+    color: #e74a3b;
+    font-size: 0.75rem;
+    line-height: 1;
+}

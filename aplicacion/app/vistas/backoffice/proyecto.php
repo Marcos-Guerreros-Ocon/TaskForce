@@ -78,12 +78,6 @@ if (isset($_SESSION['error'])) {
     <link href="<?= RUTA_URL ?>/public/css/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
     <style>
-        .msg-error {
-            color: #e74a3b;
-            font-size: 0.75rem;
-            line-height: 1;
-        }
-
         #cardGrafica {
             max-height: 450px;
         }

@@ -42,63 +42,6 @@ class Usuario extends Controlador
             $this->deleteUsuario($id);
         }
     }
-    public function registro()
-    {
-        $usuarioModelo = $this->modelo('UsuarioModelo');
-
-        // Coger datos del body
-        $json = file_get_contents('php://input');
-        $data = json_decode($json);
-
-        if ($data === 'null') {
-            header('Content-Type: application/json', true, 400);
-            echo json_encode(['mensaje' => 'Faltan datos para insertar el usuario']);
-            return;
-        }
-
-        if (!isset($data->correo) || !isset($data->username) || !isset($data->clave) || !isset($data->nombre) || !isset($data->apellidos)) {
-            header('Content-Type: application/json', true, 400);
-            echo json_encode(['mensaje' => 'Faltan datos para insertar el usuario']);
-            return;
-        }
-
-        if (!isset($data->foto)) {
-            $data->foto = null;
-        }
-
-        if (!isset($data->es_admin)) {
-            $data->es_admin = false;
-        }
-
-        if ($usuarioModelo->getUsuarioByCorreo($data->correo)) {
-            header('Content-Type: application/json', true, 400);
-            echo json_encode(['mensaje' => 'El correo ya existe']);
-            return;
-        }
-
-        if ($usuarioModelo->getUserByUsername($data->username)) {
-            header('Content-Type: application/json', true, 400);
-            echo json_encode(['mensaje' => 'El usuario ya existe']);
-            return;
-        }
-
-
-        $usario = $usuarioModelo->addUsuario($data);
-        if (!$usario) {
-            header('Content-Type: application/json', true, 400);
-            echo json_encode(['mensaje' => 'Error al insertar el usuario']);
-            return;
-        }
-
-        $token = new Token();
-        $datos = [
-            'token' => $token->generarToken($usario),
-            'usuario' => $usario
-        ];
-        header('Content-Type: application/json', true, 201);
-        echo json_encode($datos);
-        return;
-    }
 
     public function login()
     {
@@ -217,12 +160,12 @@ class Usuario extends Controlador
             return;
         }
 
-        if (!isset($data->foto)) {
-            $data->foto = null;
+        if (!isset($data->ruta_foto_perfil)) {
+            $data->ruta_foto_perfil = null;
         }
 
-        if (!isset($data->es_admin)) {
-            $data->es_admin = false;
+        if (!isset($data->rol)) {
+            $data->rol = 'usuario';
         }
 
         if ($usuarioModelo->getUsuarioByCorreo($data->correo)) {

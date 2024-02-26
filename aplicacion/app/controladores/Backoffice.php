@@ -41,9 +41,28 @@ class Backoffice extends Controlador
         die;
     }
 
-    private function usuarios($id = null)
+    public function usuarios($id = null)
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id === 'nuevo') {
+            $this->agregarUsuario();
+            return;
+        }
 
+        if (isset($id) && $id === 'nuevo') {
+            $data = [
+                'pag_actual' => 'backoffice/usuarios'
+            ];
+            $this->vista('backoffice/usuario', $data);
+            return;
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id !== null) {
+            $this->actualizarUsuario($id);
+            return;
+        }
+        if ($id !== null) {
+            $this->usuario($id);
+            return;
+        }
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, RUTA_API . 'usuario');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
@@ -54,48 +73,76 @@ class Backoffice extends Controlador
         if ($status === 401) {
             $sessionManager = new SessionManager();
             $sessionManager->destroy();
+            unset($_COOKIE['token']);
             header('location:' . RUTA_URL . '/usuario');
             return;
         }
         curl_close($ch);
         $usuarios = json_decode($response, true);
 
+        //QUITAR EL USUARIO ACTUAL DE LA LISTA
+        $sessionManager = new SessionManager();
+        $user = $sessionManager->get('user');
+        foreach ($usuarios as $key => $usuario) {
+            if ($usuario['id_usuario'] === $user['id_usuario']) {
+                unset($usuarios[$key]);
+            }
+        }
+
         $this->data['usuarios'] = $usuarios;
+        $this->data['pag_actual'] = 'backoffice/usuarios';
+
 
         $this->vista('backoffice/usuarios', $this->data);
     }
-    private function actualizarUsuario()
+    private function usuario($id)
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->vista('error/index');
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, RUTA_API . 'usuario?id_usuario=' . $id);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            unset($_COOKIE['token']);
+            header('location:' . RUTA_URL . '/usuario');
             return;
         }
-
-        $id = intval($_POST['id']);
-        $nombre = $_POST['nombre'];
-        $apellidos = $_POST['apellidos'];
-        $usuario = $_POST['usuario'];
-        $correo = $_POST['correo'];
-        $pwd = $_POST['pwd'] ?? '';
-        $pwdValid = $_POST['pwdValid'] ?? '';
-        $foto = $_FILES['foto'] ?? null;;
-        $es_admin = $_POST['admin'] ?? '0';
-        if ($es_admin === 'on') {
-            $es_admin = 1;
+        if ($status === 404) {
+            header('location:' . RUTA_URL . '/backoffice/usuarios');
         }
+        curl_close($ch);
+        $usuario = json_decode($response, true);
+        $this->data['usuario'] = $usuario;
+        $this->data['pag_actual'] = 'backoffice/usuarios';
+        $this->vista('backoffice/usuario', $this->data);
+        return;
+    }
+    private function actualizarUsuario($id)
+    {
+        $id         = intval($_POST['id']);
+        $nombre     = $_POST['nombre'];
+        $apellidos  = $_POST['apellidos'];
+        $usuario    = $_POST['usuario'];
+        $correo     = $_POST['correo'];
+        $pwd        = $_POST['pwd'] ?? '';
+        $pwdValid   = $_POST['pwdValid'] ?? '';
+        $foto       = $_FILES['foto'] ?? null;;
+        $rol        = $_POST['rol'];
 
-        $data['usuario'] = [
-            'id_usr' => $id,
-            'nombre' => $nombre,
-            'apellidos' => $apellidos,
-            'username' => $usuario,
-            'correo' => $correo,
-            'foto' => $foto,
-            'es_admin' => $es_admin
+        $datosActualizar = [
+            'id_usuario'    => $id,
+            'nombre'        => $nombre,
+            'apellidos'     => $apellidos,
+            'username'      => $usuario,
+            'correo'        => $correo,
+            'rol'           => $rol
         ];
 
-
-        $ch = curl_init(RUTA_API . 'usuario?id_usr=' . $id);
+        $ch = curl_init(RUTA_API . 'usuario?id_usuario=' . $id);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
@@ -116,53 +163,6 @@ class Backoffice extends Controlador
         }
 
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, RUTA_API . 'usuario/correo/' . $correo);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $response = curl_exec($ch);
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($status === 401) {
-            $sessionManager = new SessionManager();
-            $sessionManager->destroy();
-            header('location:' . RUTA_URL . '/usuario');
-            return;
-        }
-        $response = json_decode($response, true);
-
-        if (isset($response['id_usr']) && $response['id_usr'] !== $id) {
-            $error = 'El correo ya esta en uso';
-            $data['error'] = $error;
-            $this->vista('usuario/perfil', $data);
-            return;
-        }
-
-        curl_close($ch);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, RUTA_API . 'usuario/username/' . $usuario);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $response = curl_exec($ch);
-        $response = json_decode($response, true);
-
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($status === 401) {
-            $sessionManager = new SessionManager();
-            $sessionManager->destroy();
-            header('location:' . RUTA_URL . '/usuario');
-            return;
-        }
-        if (isset($response['id_usr']) && $response['id_usr'] !== $id) {
-            $error = 'El nombre de usuario ya esta en uso';
-            $data['error'] = $error;
-            $this->vista('usuario/perfil', $data);
-            return;
-        }
-
-
         $fotoSubida = null;
         // SI NO SE HA CAMBIADO LA FOTO Y EL USUARIO YA TENIA UNA
         if (isset($usuarioBD['foto']) && $foto['name'] === '') {
@@ -174,16 +174,16 @@ class Backoffice extends Controlador
             if (!$this->quitarFoto($usuarioBD['foto'])) {
                 $error = 'Error al quitar la foto';
                 $data['error'] = $error;
-                $this->vista('usuario/perfil', $data);
+                $this->vista('backoffice/usuario', $data);
                 return;
             }
             if (!$this->subirImagen($id)) {
                 $error = 'Error al subir la imagen';
                 $data['error'] = $error;
-                $this->vista('usuario/perfil', $data);
+                $this->vista('backoffice/usuario', $data);
                 return;
             }
-            $fotoSubida =   'public/img/usr/' . $usuarioBD['id_usr'] . '.' . pathinfo($foto['name'], PATHINFO_EXTENSION);
+            $fotoSubida =   'public/img/usr/' . $usuarioBD['id_usuario'] . '.' . pathinfo($foto['name'], PATHINFO_EXTENSION);
         }
 
         // SI SE HA CAMBIADO LA FOTO Y EL USUARIO NO TENIA UNA
@@ -191,26 +191,28 @@ class Backoffice extends Controlador
             if (!$this->subirImagen($id)) {
                 $error = 'Error al subir la imagen';
                 $data['error'] = $error;
-                $this->vista('usuario/perfil', $data);
+                $this->vista('backoffice/usuario', $data);
                 return;
             }
-            $fotoSubida = 'public/img/usr/' . $usuarioBD['id_usr'] . '.' . pathinfo($foto['name'], PATHINFO_EXTENSION);
+            $fotoSubida = 'public/img/usr/' . $usuarioBD['id_usuario'] . '.' . pathinfo($foto['name'], PATHINFO_EXTENSION);
         }
 
-        $datosActualizar = [
-            'id_usr' => $id,
-            'correo' => $correo,
-            'username' => $usuario,
-            'clave' => $usuarioBD['clave'],
-            'nombre' => $nombre,
-            'apellidos' => $apellidos,
-            'foto' => $fotoSubida,
-            'es_admin' => $es_admin
-        ];
+        $nombre     = $_POST['nombre'];
+        $apellidos  = $_POST['apellidos'];
+        $usuario    = $_POST['usuario'];
+        $correo     = $_POST['correo'];
+        $pwd        = $_POST['pwd'] ?? '';
+        $pwdValid   = $_POST['pwdValid'] ?? '';
+        $foto       = $_FILES['foto'] ?? null;;
+        $rol        = $_POST['rol'];
+
         if ($pwd !== '' && $pwdValid !== '' && $pwdValid ===  $pwd) {
             $datosActualizar['clave'] = md5($pwd);
         }
 
+        if ($foto['name'] !== '') {
+            $datosActualizar['ruta_foto_perfil'] = $fotoSubida;
+        }
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, RUTA_API . 'usuario');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
@@ -236,19 +238,105 @@ class Backoffice extends Controlador
             return;
         }
         curl_close($ch);
-        $data['exito'] = true;
-        $data['usuario'] = $datosActualizar;
+        $data['exito'] = 'Usuario actualizado con exito.';
+        $data['usuario'] = json_decode($response, true);
+        $data['pag_actual'] = 'backoffice/usuarios';
 
         $this->vista('backoffice/usuario', $data);
         return;
     }
+    private function agregarUsuario()
+    {
+        $nombre     = $_POST['nombre'];
+        $apellidos  = $_POST['apellidos'];
+        $usuario    = $_POST['usuario'];
+        $correo     = $_POST['correo'];
+        $pwd        = $_POST['pwd'] ?? '';
+        $pwdValid   = $_POST['pwdValid'] ?? '';
+        $foto       = $_FILES['foto'] ?? null;;
+        $rol        = $_POST['rol'];
 
-    private function borrarUsuario($id)
+        $usuario = [
+            'nombre'    => $nombre,
+            'apellidos' => $apellidos,
+            'username'  => $usuario,
+            'correo'    => $correo,
+            'clave'     => md5($pwd),
+            'rol'       => $rol
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, RUTA_API . 'usuario');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($usuario));
+
+        $response = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            setcookie('token', '', time() - 3600, '/');
+            unset($_COOKIE['token']);
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+        if ($status !== 201) {
+            $this->data['usuario'] = $usuario;
+            $this->data['pag_actual'] = 'backoffice/usuarios';
+            $error = json_decode($response, true);
+            $this->data['error'] = $error['mensaje'];
+            $this->vista('backoffice/usuario', $this->data);
+            return;
+        }
+
+        $usuarioBD = json_decode($response, true);
+        if ($foto['name'] === '') {
+            $_SESSION['exito'] = "Usuario dado de alta con exito";
+            header('location:' . RUTA_URL . '/backoffice/usuarios/' . $usuarioBD['id_usuario']);
+            return;
+        }
+        $this->subirImagen($usuarioBD['id_usuario']);
+        $fotoSubida =   'public/img/usr/' . $usuarioBD['id_usuario'] . '.' . pathinfo($foto['name'], PATHINFO_EXTENSION);
+        $usuario['id_usuario'] = $usuarioBD['id_usuario'];
+        $usuario['ruta_foto_perfil'] = $fotoSubida;
+
+        $url = RUTA_API . 'usuario';
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($usuario));
+        $response = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            setcookie('token', '', time() - 3600, '/');
+            unset($_COOKIE['token']);
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+        if ($status !== 200) {
+            $this->data['usuario'] = $usuario;
+            $this->data['pag_actual'] = 'backoffice/usuarios';
+            $error = json_decode($response, true);
+            $this->data['error'] = $error['mensaje'];
+            $this->vista('backoffice/usuario', $this->data);
+            return;
+        }
+        $_SESSION['exito'] = "Usuario dado de alta con exito";
+        header('location:' . RUTA_URL . '/backoffice/usuarios/' . $usuarioBD['id_usuario']);
+        return;
+    }
+    public function borrarUsuario($id)
     {
 
-        $ch = curl_init(RUTA_API . 'usuario?id_usr=' . $id);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $ch = curl_init(RUTA_API . 'usuario?id_usuario=' . $id);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $response = curl_exec($ch);
         $usuarioBD = json_decode($response, true);
@@ -259,16 +347,20 @@ class Backoffice extends Controlador
             header('location:' . RUTA_URL . '/usuario');
             return;
         }
-        if ($status === 404) {
-            $this->vista('error/index');
-            return;
+        if ($status !== 200) {
+            return false;
         }
 
-        $ch = curl_init(RUTA_API . 'usuario?id_usr=' . $id);
+        if ($usuarioBD['ruta_foto_perfil'] !== null) {
+            $this->quitarFoto($usuarioBD['ruta_foto_perfil']);
+        }
+        $ch = curl_init(RUTA_API . 'usuario?id_usuario=' . $id);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
         $response = curl_exec($ch);
+        $usuarioBD = json_decode($response, true);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($status === 401) {
             $sessionManager = new SessionManager();
@@ -276,14 +368,15 @@ class Backoffice extends Controlador
             header('location:' . RUTA_URL . '/usuario');
             return;
         }
-        if ($usuarioBD['foto'] !== null) {
-            $this->quitarFoto($usuarioBD['foto']);
+        if ($status !== 200) {
+            return false;
         }
 
-        $this->data['exito'] = true;
-        header('location:' . RUTA_URL . '/backoffice/usuarios');
+        return true;
     }
 
+
+    // CRUD PROYECTOS
     public function proyectos($id = null)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id === 'nuevo') {
@@ -513,7 +606,7 @@ class Backoffice extends Controlador
         header('Location:' . RUTA_URL . '/backoffice/proyectos/' . $proyecto);
     }
 
-
+    // FUNCIONES AUXILIARES
     private function subirImagen($nombreFoto)
     {
 

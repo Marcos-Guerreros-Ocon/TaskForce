@@ -34,7 +34,7 @@ class Usuario extends Controlador
 
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, RUTA_API . 'usuario/login/');
+        curl_setopt($ch, CURLOPT_URL, RUTA_API . 'api/login/');
         curl_setopt($ch, CURLOPT_POST, 1);
         $pwd = md5($pwd);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);

@@ -1,218 +1,232 @@
-<?php
-$exito = 'false';
-if (isset($datos['exito'])) {
-    $exito = 'true';
-    unset($datos['exito']);
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogroFilm</title>
-    <link rel="shortcut icon" href="<?= RUTA_URL ?>/public/img/logo.png" type="image/x-icon">
-    <link href="<?= RUTA_URL . '/' ?>public/css/bootstrap/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= RUTA_URL . '/' ?>public/css/estilos.css">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" href="<?= RUTA_URL ?>/public/img/logo.png" />
+
+    <title>Task Force</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="<?= RUTA_URL ?>/public/css/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="<?= RUTA_URL ?>/public/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= RUTA_URL ?>/public/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="<?= RUTA_URL ?>/public/css/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
     <style>
-        /* Fichero CSS aparte */
+        .img-max {
 
-        /* Clase para el botón */
-        .btn-outline-secondary {
-            background-color: transparent;
-            border-color: #6c757d;
-            color: #6c757d;
-        }
-
-        .btn-outline-secondary:hover {
-            background-color: #6c757d;
-            color: #fff;
-        }
-
-        /* Clase para el texto del botón */
-        .text-gray-900 {
-            color: #212529;
-        }
-
-        /* Clase para el contenedor */
-        .container {
-            width: 100%;
-            padding-right: 15px;
-            padding-left: 15px;
-            margin-right: auto;
-            margin-left: auto;
-        }
-
-        /* Clase para el sombreado */
-        .shadow {
-            box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
-        }
-
-        /* Clase para el tamaño máximo del ancho */
-        .max-w-sm {
-            max-width: 24rem;
-        }
-
-        /* Clase para el color de fondo */
-        .bg-white {
-            background-color: #fff;
-        }
-
-        /* Clase para el borde */
-        .border {
-            border: 1px solid #dee2e6;
-        }
-
-        /* Clase para el color del borde */
-        .border-secondary {
-            border-color: #6c757d;
-        }
-
-        /* Clase para el borde redondeado */
-        .rounded-lg {
-            border-radius: .3rem;
-        }
-
-        .p-10 {
-            padding: 2.5rem;
-        }
-
-        .h-full {
-            height: 100% !important;
-        }
-
-        .test {
-            max-height: 100%;
-            height: 100px;
-        }
-
-        .poster {
-            max-width: 100px;
-            overflow: hidden;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            object-position: top;
+            border: 1px solid #dddfeb !important;
+            border-radius: 0.35rem;
         }
     </style>
+</head>
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <?php require_once RUTA_APP . '/vistas/inc/sidebar.php'; ?>
+        <!-- End of Sidebar -->
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <?php require_once RUTA_APP . '/vistas/inc/topbar.php'; ?>
+                <!-- End of Topbar -->
 
-<body>
-    <div id="main">
-        <?php require RUTA_APP . '/vistas/inc/cabecera.php'; ?>
-        <div class="container">
-            <h1 class="text-center mt-5">Usuarios </h1>
-            <table id="example" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Foto</th>
-                        <th>Nombre</th>
-                        <th>Apellidos</th>
-                        <th>Correo</th>
-                        <th>Usuario</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($datos['usuarios'] as $usuario) : ?>
-                        <tr>
-                            <td class="text-center">
-                                <?php if ($usuario['foto'] != null) : ?>
-                                    <img src="<?= RUTA_URL . '/' . $usuario['foto'] ?>" alt="" class="test poster rounded-circle shadow-lg">
-                            </td>
-                        <?php else : ?>
-                            <img src="<?= RUTA_URL . '/' ?>public/img/blank_user.webp" alt="" class="test poster rounded-circle shadow-lg"></td>
-                        <?php endif; ?>
-                        <td class="text-center  align-middle"><?= $usuario['nombre'] ?></td>
-                        <td class="text-center  align-middle"><?= $usuario['apellidos'] ?></td>
-                        <td class="text-center  align-middle"><?= $usuario['correo'] ?></td>
-                        <td class="text-center  align-middle"><?= $usuario['username'] ?></td>
-                        <td class="d-flex flex-column flex-lg-row justify-content-center align-items-center test">
-                            <a href="<?= RUTA_URL ?>/backoffice/usuarios/<?= $usuario['id_usr'] ?>" class="btn btn-primary rounded-lg px-4 py-2 text-sm font-medium text-center text-white">Editar</a>
-                            <a class="btn btn-danger rounded-lg px-4 py-2 text-sm font-medium text-center text-white mx-lg-2 my-2 borrar" id="<?= $usuario['id_usr'] ?>">Borrar</a>
-                        </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active"><a href="#">Usuarios</a></li>
+                                <li class="breadcrumb-item"></li>
+                            </ol>
+                        </nav>
+                    </div>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Usuarios</h6>
+                            <a href="<?= RUTA_URL ?>/backoffice/usuarios/nuevo" class="btn btn-primary btn-icon-split">
+                                <span class="icon text-white-50"><i class="fa fa-user-plus"></i></span>
+                                <span class="text">Agregar Usuario</span>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" cellspacing="0">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Nombre</th>
+                                            <th>Apellidos</th>
+                                            <th>Correo</th>
+                                            <th>Usuario</th>
+                                            <th>Rol</th>
+                                            <th>Accion</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($datos['usuarios'] as $usuario) : ?>
+                                            <tr>
+                                                <td class="">
+                                                    <?php if ($usuario['ruta_foto_perfil'] != null) : ?>
+                                                        <img src="<?= RUTA_URL . '/' . $usuario['ruta_foto_perfil'] ?>" alt="" class="img-max rounded-circle shadow-lg">
+
+                                                    <?php else : ?>
+                                                        <img src="<?= RUTA_URL . '/' ?>public/img/usr/blank_user.webp" alt="" class="img-max rounded-circle shadow-lg">
+                                                    <?php endif; ?>
+                                                    <?= $usuario['nombre'] ?>
+                                                </td>
+                                                <td class="text-center  align-middle"><?= $usuario['apellidos'] ?></td>
+                                                <td class="text-center  align-middle"><?= $usuario['correo'] ?></td>
+                                                <td class="text-center  align-middle"><?= $usuario['username'] ?></td>
+                                                <td class="text-center  align-middle"><?= $usuario['rol'] ?></td>
+                                                <td>
+                                                    <a href="<?= RUTA_URL ?>/backoffice/usuarios/<?= $usuario['id_usuario'] ?>" class="btn btn-primary btn-icon-split">
+                                                        <span class="icon text-white-50"><i class="fa fa-pencil-alt"></i></span>
+                                                        <span class="text">Editar</span>
+                                                    </a>
+                                                    <a id="<?= $usuario['id_usuario'] ?>" class="btn btn-danger  btn-icon-split borrar">
+                                                        <span class="icon text-white-50"><i class="fa fa-trash-alt"></i></span>
+                                                        <span class="text">Eliminar</span>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <?php require_once RUTA_APP . '/vistas/inc/footer.php'; ?>
+            <!-- End of Footer -->
+
         </div>
+        <!-- End of Content Wrapper -->
+
     </div>
-    <?php require RUTA_APP . '/vistas/inc/footer.php'; ?>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <?php require_once RUTA_APP . '/vistas/inc/modalLogout.php'; ?>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="<?= RUTA_URL ?>/public/js/jquery/jquery.min.js"></script>
+    <script src="<?= RUTA_URL ?>/public/js/bootstrap/bootstrap.bundle.min.js"></script>
 
 
-    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="<?= RUTA_URL ?>/public/js/jquery-easing/jquery.easing.min.js"></script>
+
+
+    <!-- Custom scripts for all pages-->
+    <script src="<?= RUTA_URL ?>/public/js/sb-admin-2.min.js"></script>
+
+    <script src="<?= RUTA_URL ?>/public/css/datatables/jquery.dataTables.min.js"></script>
+    <script src="<?= RUTA_URL ?>/public/css/datatables/dataTables.bootstrap4.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         $(document).ready(function() {
-
-            $('#example').DataTable({
-                responsive: true,
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+            $('#dataTable').DataTable(({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
                 },
                 "columnDefs": [{
                     "orderable": false,
-                    "targets": [0, -1]
+                    "targets": [-1]
                 }],
                 "order": [
-                    [1, 'asc'] // Ordenar por la segunda columna inicialmente
+                    [0, 'desc'] // Ordenar por la segunda columna inicialmente
                 ]
 
-            });
-        });
+            }));
 
-
-        document.querySelectorAll('.borrar').forEach(item => {
-            item.onclick = async () => {
-                let id = item.getAttribute('id');
-                Swal.fire({
-                    title: "¿Estas seguro de borrar este usuario?",
-                    text: "Una vez borrado no se podrá recuperar",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Si, borrar"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        let id = item.getAttribute('id');
-                        borrar(id);
-                    }
-                });
-            }
-
-        })
-
-
-        const borrar = async (id) => {
-            const response = await fetch(`<?= RUTA_API ?>usuario?id_usr=${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
+            document.querySelectorAll('.borrar').forEach(item => {
+                item.onclick = async () => {
+                    let id = item.getAttribute('id');
+                    Swal.fire({
+                        title: "¿Estas seguro de borrar este usuario?",
+                        text: "Una vez borrado no se podrá recuperar",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Si, borrar"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            let id = item.getAttribute('id');
+                            borrar(id);
+                        }
+                    });
                 }
-            });
 
-            if (response.status === 200) {
-                swal.fire({
-                    title: "Pelicula borrada",
-                    text: "El ususario ha sido borrada correctamente",
-                    icon: "success",
-                    confirmButtonText: "Aceptar",
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        location.reload();
+            })
+
+            const borrar = async (id) => {
+                const token = getCookie('token');
+                const response = await fetch(`${RUTA_URL}/backoffice/borrarUsuario/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     }
                 });
-            } else {
-                swal.fire({
-                    title: "Error",
-                    text: "Ha ocurrido un error al borrar el usuario",
-                    icon: "error",
-                    confirmButtonText: "Aceptar",
-                });
+                if (response) {
+                    swal.fire({
+                        title: "Usuario borrado",
+                        text: "El usuario ha sido borrado correctamente",
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
+                    }).then((result) => {
+                        location.reload();
+                    });
+                } else {
+                    swal.fire({
+                        title: "Error",
+                        text: "Ha ocurrido un error al borrar el usuario",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                }
             }
-        }
+        });
     </script>
+
+
 </body>
 
 </html>

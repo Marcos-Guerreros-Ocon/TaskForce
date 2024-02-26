@@ -55,6 +55,11 @@ class Api extends Controlador
         $usuarioModelo->updateUsuario($usuario);
 
         header('Content-Type: application/json', true, 200);
-        echo json_encode($usuario);
+        $data = [
+            'token' => $token_jwt,
+            'usuario' => $usuario
+        ];
+        echo json_encode($data);
+        return;
     }
 }

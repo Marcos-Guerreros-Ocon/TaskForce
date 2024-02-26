@@ -14,10 +14,6 @@ class Tareas extends Controlador
             $sessionManager->destroy();
             header('location:' . RUTA_URL . '/usuario');
         }
-
-        if ($_SESSION['user']['rol'] === 'usuario') {
-            header('location:' . RUTA_URL . '/usuario');
-        }
         $this->token = $_COOKIE['token'];
         $this->data['pag_actual'] = 'tareas';
     }
