@@ -16,7 +16,8 @@ class Paginas extends Controlador
 
     public function error()
     {
-        $this->vista('error/index');
+        $data['pag_actual'] = "error";
+        $this->vista('error/index', $data);
     }
     public function prueba()
     {

@@ -27,7 +27,7 @@ class TareaModelo
     }
     public function getTareasByUser($idUsuario)
     {
-        $this->bd->query('SELECT t.id_tarea,p.nombre,t.nombre_tarea,t.descripcion_tarea, t.estado FROM tareas t JOIN proyectos p ON t.id_proyecto = p.id_proyecto WHERE t.id_usuario = :id_usuario');
+        $this->bd->query('SELECT t.id_tarea,t.id_proyecto,p.nombre,t.nombre_tarea,t.descripcion_tarea, t.estado FROM tareas t JOIN proyectos p ON t.id_proyecto = p.id_proyecto WHERE t.id_usuario = :id_usuario');
         $this->bd->bind(':id_usuario', $idUsuario);
         return $this->bd->registros();
     }

@@ -1,3 +1,9 @@
+<?php
+$pag_actual = "";
+if (isset($datos['pag_actual'])) {
+    $pag_actual = $datos['pag_actual'];
+}
+?>
 <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
@@ -12,7 +18,7 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item <?php if ($datos['pag_actual'] == 'dashboard') : ?> active <?php endif; ?>">
+    <li class="nav-item <?php if ($pag_actual == 'dashboard') : ?> active <?php endif; ?>">
         <a class="nav-link" href="<?= RUTA_URL ?>/dashboard">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
@@ -29,14 +35,14 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <?php if ($_SESSION['user']['rol'] !== 'usuario') : ?>
-        <li class="nav-item <?php if ($datos['pag_actual'] == 'proyectos') : ?> active <?php endif; ?>">
+        <li class="nav-item <?php if ($pag_actual == 'proyectos') : ?> active <?php endif; ?>">
             <a class="nav-link" href="<?= RUTA_URL ?>/proyectos">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Mis Proyectos</span>
             </a>
         </li>
     <?php endif; ?>
-    <li class="nav-item <?php if ($datos['pag_actual'] == 'tareas') : ?> active <?php endif; ?>">
+    <li class="nav-item <?php if ($pag_actual == 'tareas') : ?> active <?php endif; ?>">
         <a class="nav-link" href="<?= RUTA_URL ?>/tareas">
             <i class="fas fa-fw fa-tasks"></i>
             <span>Mis tareas</span>
@@ -51,13 +57,13 @@
             Administración
         </div>
         <!-- Nav Item - Charts -->
-        <li class="nav-item <?php if ($datos['pag_actual'] == 'backoffice/proyectos') : ?> active <?php endif; ?>">
+        <li class="nav-item <?php if ($pag_actual == 'backoffice/proyectos') : ?> active <?php endif; ?>">
             <a class="nav-link" href="<?= RUTA_URL ?>/backoffice/proyectos">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Proyectos</span>
             </a>
         </li>
-        <li class="nav-item <?php if ($datos['pag_actual'] == 'backoffice/tareas') : ?> active <?php endif; ?>">
+        <li class="nav-item <?php if ($pag_actual == 'backoffice/tareas') : ?> active <?php endif; ?>">
             <a class="nav-link" href="<?= RUTA_URL ?>/backoffice/tareas">
                 <i class="fas fa-fw fa-tasks"></i>
                 <span>Tareas</span>
@@ -70,7 +76,7 @@
                 <span>Comentarios</span>
             </a>
         </li>
-        <li class="nav-item <?php if ($datos['pag_actual'] == 'backoffice/usuarios') : ?> active <?php endif; ?>">
+        <li class="nav-item <?php if ($pag_actual == 'backoffice/usuarios') : ?> active <?php endif; ?>">
             <a class="nav-link" href="<?= RUTA_URL ?>/backoffice/usuarios">
                 <i class="fas fa-fw fa-user"></i>
                 <span>Usuarios</span>

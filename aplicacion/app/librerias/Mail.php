@@ -43,9 +43,6 @@ class Mail
 
             $this->mailer->Subject = $asunto;
             $this->mailer->Body = $mensaje;
-
-
-
             $this->mailer->send();
             return  true;
         } catch (Exception $e) {

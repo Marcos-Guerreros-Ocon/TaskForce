@@ -66,7 +66,10 @@
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex align-items-center justify-content-between">
                             <h6 class="m-0 font-weight-bold text-primary">Mis Proyectos</h6>
-                            <a class="btn btn-primary" href="<?= RUTA_URL ?>/proyectos/nuevo">Agregar Proyecto</a>
+                            <a class="btn btn-primary btn-icon-split" href="<?= RUTA_URL ?>/proyectos/nuevo">
+                                <span class="icon text-white-50"><i class="fa fa-save"></i></span>
+                                <span class="text">Agregar Proyecto</span>
+                            </a>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -75,7 +78,6 @@
                                         <tr>
                                             <th>Nombre</th>
                                             <th>Descripción</th>
-
                                             <th>Cliente</th>
                                             <th>Fecha inicio</th>
                                             <th>Fecha fin</th>

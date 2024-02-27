@@ -139,6 +139,67 @@ class Usuario extends Controlador
         }
     }
 
+    public function dashboard()
+    {
+
+        $token = new Token();
+        if (!$token->isLogin()) {
+            header("Content-Type: application/json", true, 401);
+            echo json_encode(['mensaje' => 'No autorizado']);
+            exit;
+        }
+        $aux = $token->getPayload();
+        $id_usuario = $aux->id_usr;
+
+        $tareaModelo = $this->modelo('TareaModelo');
+        $tareas = $tareaModelo->getTareasByUser($id_usuario);
+        $totalTareas = count($tareas);
+
+        $completadas = 0;
+        $enProgreso = 0;
+        $pendientes = 0;
+        $tareas_proyecto = array();
+        foreach ($tareas as $tarea) {
+            if ($tarea->estado === "completada") {
+                $completadas++;
+            }
+            if ($tarea->estado === "en_progreso") {
+                $enProgreso++;
+            }
+            if ($tarea->estado === "pendiente") {
+                $pendientes++;
+            }
+
+
+            if (isset($tareas_proyecto[$tarea->id_proyecto])) {
+                $tareas_proyecto[$tarea->id_proyecto]['cantidad'] = $tareas_proyecto[$tarea->id_proyecto]['cantidad'] + 1;
+            } else {
+                $tareas_proyecto[$tarea->id_proyecto]['nombre_proyecto'] = $tarea->nombre;
+                $tareas_proyecto[$tarea->id_proyecto]['cantidad'] = 1;
+            }
+        }
+
+        $porcentaje = intval((($completadas) / $totalTareas) * 100);
+        $datos = array(
+            'tareas_total'          =>  $totalTareas,
+            'tareas_completadas'    =>  $completadas,
+            'tareas_en_progreso'    =>  $enProgreso,
+            'tareas_pendientes'     =>  $pendientes,
+            'tareas_porcentaje'     =>  $porcentaje,
+            'mis_tareas'            =>  $tareas_proyecto
+        );
+
+        if ($aux->rol !== 'usuario') {
+            $proyectoModelo = $this->modelo('ProyectoModelo');
+            $top5Proyectos = $proyectoModelo->getProyectos5ByIdUsuario($id_usuario);
+            $datos['misProyectos'] = $top5Proyectos;
+        }
+
+        $datos;
+        header("Content-Type: application/json", true, 200);
+        echo json_encode($datos);
+    }
+
     // METODOS PRIVADOS
     private function addUsuario()
     {

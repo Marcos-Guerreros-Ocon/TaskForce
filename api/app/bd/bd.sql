@@ -62,3 +62,15 @@ ADD CONSTRAINT fk_tareas_proyectos FOREIGN KEY (id_proyecto) REFERENCES proyecto
 -- Modificar la tabla de comentarios para agregar la eliminación en cascada
 ALTER TABLE comentarios
 ADD CONSTRAINT fk_comentarios_tareas FOREIGN KEY (id_tarea) REFERENCES tareas (id_tarea) ON DELETE CASCADE;
+
+ALTER TABLE proyectos
+ADD CONSTRAINT fk_proyectos_usuarios FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario) ON DELETE CASCADE;
+
+-- Modificar la tabla de tareas para agregar la eliminación en cascada desde proyectos y usuarios
+ALTER TABLE tareas
+ADD CONSTRAINT fk_tareas_usuarios FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario) ON DELETE CASCADE;
+
+-- Modificar la tabla de comentarios para agregar la eliminación en cascada desde tareas, proyectos y usuarios
+ALTER TABLE comentarios
+ADD CONSTRAINT fk_comentarios_proyectos FOREIGN KEY (id_tarea) REFERENCES tareas (id_tarea) ON DELETE CASCADE,
+ADD CONSTRAINT fk_comentarios_usuarios FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario) ON DELETE CASCADE;

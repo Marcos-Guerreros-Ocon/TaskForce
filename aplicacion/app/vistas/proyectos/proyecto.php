@@ -157,10 +157,19 @@ if (isset($_SESSION['exito'])) {
                                         </div>
                                         <div class="d-flex flex-lg-row flex-column justify-content-center">
                                             <?php if ($id !== "") : ?>
-                                                <button class="btn btn-primary" type="submit"><i class="fa fa-pen mr-1"></i> Actualizar Proyecto</button>
-                                                <a class="btn btn-danger mx-3" id="btnBorrarProyecto"><i class="fa fa-trash mx-2"></i>Borrar proyecto</a>
+                                                <button class="btn btn-primary btn-icon-split m-3" type="submit">
+                                                    <span class="icon text-white-50"><i class="fa fa-save"></i></span>
+                                                    <span class="text">Actualizar Proyecto</span>
+                                                </button>
+                                                <a id="btnBorrarProyecto" class="btn btn-danger  btn-icon-split m-3">
+                                                    <span class="icon text-white-50"><i class="fa fa-trash-alt"></i></span>
+                                                    <span class="text">Borrar proyecto</span>
+                                                </a>
                                             <?php else : ?>
-                                                <button class="btn btn-primary" type="submit">Agregar Proyecto</button>
+                                                <button class="btn btn-primary btn-icon-split m-3" type="submit">
+                                                    <span class="icon text-white-50"><i class="fa fa-save"></i></span>
+                                                    <span class="text">Agregar Proyecto</span>
+                                                </button>
                                             <?php endif; ?>
                                         </div>
                                 </div>
@@ -175,7 +184,10 @@ if (isset($_SESSION['exito'])) {
                                 <div class="card shadow">
                                     <div class="card-header py-3 d-flex align-items-center justify-content-between">
                                         <h6 class="m-0 font-weight-bold text-primary">Tareas del proyecto</h6>
-                                        <a class="btn btn-primary" data-target="#addTareaModal" data-toggle="modal">Agregar Tarea</a>
+                                        <a class="btn btn-primary btn-icon-split" data-target="#addTareaModal" data-toggle="modal">
+                                            <span class="icon text-white-50"><i class="fa fa-save"></i></span>
+                                            <span class="text">Agregar Tarea</span>
+                                        </a>
                                     </div>
                                     <div class="card-body">
                                         <div class="table-responsive">

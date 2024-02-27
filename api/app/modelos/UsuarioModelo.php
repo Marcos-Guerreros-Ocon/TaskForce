@@ -88,6 +88,18 @@ class UsuarioModelo
 
     public function deleteUsuario($id_usuario)
     {
+        $this->bd->query('DELETE FROM comentarios WHERE id_usuario = :id_usuario');
+        $this->bd->bind(':id_usuario', $id_usuario);
+        $this->bd->execute();
+
+        $this->bd->query('DELETE FROM tareas WHERE id_usuario = :id_usuario');
+        $this->bd->bind(':id_usuario', $id_usuario);
+        $this->bd->execute();
+
+        $this->bd->query('DELETE FROM proyectos WHERE id_usuario = :id_usuario');
+        $this->bd->bind(':id_usuario', $id_usuario);
+        $this->bd->execute();
+
         $this->bd->query('DELETE FROM usuarios WHERE id_usuario = :id_usuario');
         $this->bd->bind(':id_usuario', $id_usuario);
         return $this->bd->execute();

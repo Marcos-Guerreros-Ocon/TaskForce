@@ -93,6 +93,7 @@ if (searchInput2 != null && searchResultsContainer2 != null) {
         )
             .then((response) => response.json())
             .then((data) => {
+                data = data.filter(usuario => usuario.rol !== "usuario");
                 searchResultsContainer2.innerHTML = "";
                 data.forEach((result) => {
                     const card = document.createElement("div");

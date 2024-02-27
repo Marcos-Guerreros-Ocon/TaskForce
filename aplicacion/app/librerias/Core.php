@@ -61,7 +61,16 @@ class Core
         $this->parametros = $url ? array_values($url) : [];
 
         // Llamar callback con parametros array
-        call_user_func_array([$this->controladorActual, $this->metodoActual], $this->parametros);
+        try {
+            call_user_func_array([$this->controladorActual, $this->metodoActual], $this->parametros);
+        } catch (TypeError $e) {
+            require_once '../app/controladores/Paginas.php';
+            $this->controladorActual = new Paginas();
+            $this->metodoActual = 'error';
+            $this->parametros = $url ? array_values($url) : [];
+
+            call_user_func_array([$this->controladorActual, $this->metodoActual], $this->parametros);
+        }
     }
 
     public function getUrl(): ?array
