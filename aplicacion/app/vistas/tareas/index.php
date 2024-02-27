@@ -80,7 +80,12 @@
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <a href="<?= RUTA_URL . '/tareas/' . $tarea['id_tarea'] ?>" class="btn btn-primary">Editar</a>
+
+                                                    <a href="<?= RUTA_URL ?>/tareas/<?= $tarea['id_tarea'] ?>" class="btn btn-primary btn-icon-split">
+                                                        <span class="icon text-white-50"><i class="fa fa-pencil-alt"></i></span>
+                                                        <span class="text">Editar</span>
+                                                    </a>
+
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

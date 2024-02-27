@@ -110,7 +110,7 @@ if (isset($_SESSION['error'])) {
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item "><a href="<?= RUTA_URL ?>/proyectos">Proyectos</a></li>
+                                <li class="breadcrumb-item "><a href="<?= RUTA_URL ?>/backoffice/proyectos">Proyectos</a></li>
                                 <?php if (isset($datos['proyecto'])) : ?>
                                     <li class="breadcrumb-item active"><a href="#">Editar Proyecto</a></li>
                                 <?php else : ?>
@@ -129,8 +129,10 @@ if (isset($_SESSION['error'])) {
                                     <?php else : ?>
                                         <h6 class="m-0 font-weight-bold text-primary">Nuevo Proyecto</h6>
                                     <?php endif; ?>
-
-                                    <a class="btn btn-secondary" href="<?= RUTA_URL ?>/proyectos"><i class="fa fa-arrow-left"></i> Volver</a>
+                                    <a href="<?= RUTA_URL ?>/backoffice/proyectos" class="btn btn-secondary btn-icon-split">
+                                        <span class="icon text-white-50"><i class="fa fa-arrow-left"></i></span>
+                                        <span class="text">Volver</span>
+                                    </a>
                                 </div>
                                 <div class="card-body">
                                     <form action="<?= $method ?>" method="POST">
@@ -325,6 +327,10 @@ if (isset($_SESSION['error'])) {
                             <div class="form-group">
                                 <label for="cliente" class="required">Trabajador asociado</label>
                                 <input type="text" class="form-control" id="nombreTrabajador" name="nombreTrabajador" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="comentario" class="required">Comentario del trabajador</label>
+                                <textarea class="form-control" id="comentario" name="comentario" rows="3" disabled></textarea>
                             </div>
                             <div class="form-group d-flex align-items-center justify-content-center">
                                 <a class="btn btn-primary" id="actualizarTarea">Actualizar Tarea</a>
@@ -521,7 +527,7 @@ if (isset($_SESSION['error'])) {
 
     <script src="<?= RUTA_URL ?>/public/js/busqueda.js"></script>
     <?php if (isset($datos['proyecto'])) : ?>
-        <script src="<?= RUTA_URL ?>/public/js/proyecto.min.js"></script>
+        <script src="<?= RUTA_URL ?>/public/js/proyecto.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Obtener el contexto del canvas

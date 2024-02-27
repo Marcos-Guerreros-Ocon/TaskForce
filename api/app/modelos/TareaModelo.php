@@ -9,14 +9,18 @@ class TareaModelo
 
     public function getTareas()
     {
-        $this->bd->query('SELECT * FROM tareas');
+        $this->bd->query('SELECT t.id_tarea,t.nombre_tarea ,t.descripcion_tarea,t.id_usuario, u.correo ,p.id_proyecto,p.nombre, p.id_usuario as "id_gestor",t.nombre_tarea,t.descripcion_tarea, t.estado FROM tareas t 
+        JOIN proyectos p ON t.id_proyecto = p.id_proyecto
+        JOIN usuarios u ON t.id_usuario = u.id_usuario');
+
         return $this->bd->registros();
     }
     public function getTarea($id)
     {
-        $this->bd->query('SELECT t.id_tarea,t.nombre_tarea ,t.descripcion_tarea,t.id_usuario, u.correo ,p.id_proyecto,p.nombre, p.id_usuario as "id_gestor",t.nombre_tarea,t.descripcion_tarea, t.estado FROM tareas t 
+        $this->bd->query('SELECT t.id_tarea,t.nombre_tarea ,t.descripcion_tarea,t.id_usuario, u.correo ,p.id_proyecto,p.nombre, p.id_usuario as "id_gestor",t.nombre_tarea,t.descripcion_tarea, t.estado ,c.id_comentario,c.contenido as "comentario" FROM tareas t 
         JOIN proyectos p ON t.id_proyecto = p.id_proyecto
         JOIN usuarios u ON t.id_usuario = u.id_usuario
+        LEFT JOIN comentarios c ON t.id_tarea = c.id_tarea
         WHERE t.id_tarea = :id_tarea');
         $this->bd->bind(':id_tarea', $id);
         return $this->bd->registro();
@@ -79,6 +83,10 @@ class TareaModelo
     }
     public function deleteTarea($id)
     {
+        $this->bd->query('DELETE FROM comentarios WHERE id_tarea = :id_tarea');
+        $this->bd->bind(':id_tarea', $id);
+        $this->bd->execute();
+
         $this->bd->query('DELETE FROM tareas WHERE id_tarea = :id_tarea');
         $this->bd->bind(':id_tarea', $id);
         $this->bd->execute();

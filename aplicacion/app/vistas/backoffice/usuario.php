@@ -106,7 +106,10 @@ if (isset($datos['usuario'])) {
                             <div class="card shadow">
                                 <div class="card-header py-3 d-flex align-items-center justify-content-between">
                                     <h6 class="m-0 font-weight-bold text-primary">Usuarios</h6>
-                                    <a class="btn btn-secondary" href="<?= RUTA_URL ?>/backoffice/usuarios"><i class="fa fa-arrow-left"></i> Volver</a>
+                                    <a href="<?= RUTA_URL ?>/backoffice/usuarios" class="btn btn-secondary btn-icon-split">
+                                <span class="icon text-white-50"><i class="fa fa-arrow-left"></i></span>
+                                <span class="text">Volver</span>
+                            </a>
                                 </div>
                                 <div class="card-body">
                                     <form method="POST" enctype='multipart/form-data' action="<?= $method ?>">

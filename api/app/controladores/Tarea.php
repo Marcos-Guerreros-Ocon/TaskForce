@@ -50,7 +50,7 @@ class Tarea extends Controlador
         $rol = $aux->rol;
         $adminMode = $_GET['admin'] ?? false;
 
-        if ($adminMode && $rol === 'admin') {
+        if ($adminMode =='true' && $rol === 'admin') {
             $tareas = $tareaModelo->getTareas();
             echo json_encode($tareas);
             return;
@@ -137,6 +137,7 @@ class Tarea extends Controlador
     {
         $tarea = $this->modelo('TareaModelo');
         $tarea->deleteTarea($idTarea);
+        header('Content-Type: application/json', true, 200);
         echo json_encode(['mensaje' => 'Tarea eliminada']);
     }
 

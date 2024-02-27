@@ -260,6 +260,7 @@ window.onload = () => {
                 .then(data => {
                     document.getElementById("nombreTareaExistente").value = data.nombre_tarea;
                     document.getElementById("descripcionTareaExistente").value = data.descripcion_tarea;
+                    document.getElementById("comentario").value = data.comentario;
                     document.getElementById("nombreTrabajador").value = data.correo;
                     document.getElementById("actualizarTarea").onclick = () => {
                         actualizarTarea(data.id_tarea);

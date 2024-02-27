@@ -41,6 +41,7 @@ class Backoffice extends Controlador
         die;
     }
 
+    // CRUD USUARIOS
     public function usuarios($id = null)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id === 'nuevo') {
@@ -375,7 +376,6 @@ class Backoffice extends Controlador
         return true;
     }
 
-
     // CRUD PROYECTOS
     public function proyectos($id = null)
     {
@@ -604,6 +604,220 @@ class Backoffice extends Controlador
         $proyecto = intval(json_decode($proyecto, true));
         $_SESSION['exito'] = "Proyecto creado con éxito";
         header('Location:' . RUTA_URL . '/backoffice/proyectos/' . $proyecto);
+    }
+
+    // CRUD TAREAS
+    public function tareas($id = null)
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id === 'comentario') {
+           $this->comentario();
+           return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id !== null) {
+            $this->actualizarTara();
+            return;
+        }
+        if ($id !== null) {
+            $this->tarea($id);
+            return;
+        }
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, RUTA_API . 'tarea?admin=true');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            unset($_COOKIE['token']);
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+        if ($status !== 200) {
+            $this->vista('error/index');
+            return;
+        }
+
+        $tareas = json_decode($response, true);
+        foreach ($tareas as $key => $tarea) {
+            if (strlen($tarea['descripcion_tarea']) > 100) {
+                $tareas[$key]['descripcion_tarea'] = substr($tarea['descripcion_tarea'], 0, 100) . '...';
+            }
+        }
+        curl_close($ch);
+        $data = [
+            'tareas' => $tareas,
+            'pag_actual' => 'backoffice/tareas'
+        ];
+        $this->vista('backoffice/tareas', $data);
+        return;
+    }
+
+    private function tarea($id)
+    {
+        $url = RUTA_API . 'tarea?id=' . $id;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $tarea = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            unset($_COOKIE['token']);
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+        if ($status === 404) {
+            $this->vista('error/index');
+            return;
+        }
+        $tarea = json_decode($tarea, true);
+
+        $data = [
+            'tarea' => $tarea,
+            'pag_actual' => 'backoffice/tareas'
+        ];
+
+        $this->vista('backoffice/tarea', $data);
+        return;
+    }
+
+    private function actualizarTara()
+    {
+
+        $id             = $_POST['id_tarea'];
+        $nombre         = $_POST['nombre_tarea'];
+        $descripcion    = $_POST['descripcion_tarea'];
+        $estado         = $_POST['estado'];
+
+        $datos = array(
+            'nombre_tarea'      => $nombre,
+            'descripcion_tarea' => $descripcion,
+            'estado'            => $estado
+        );
+
+
+        $url = RUTA_API . "tarea?id=$id";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($datos));
+        $tarea = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            setcookie('token', '', time() - 3600, '/');
+            unset($_COOKIE['token']);
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+        $_SESSION['exito'] = "Tarea actualizada con éxito";
+        $this->tarea($id);
+        return;
+    }
+
+
+    private function comentario()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . RUTA_URL . '/backoffice/tareas');
+            return;
+        }
+
+        $id_tarea       =   $_POST['id_tarea'];
+        $id_comentario  =   $_POST['id_comentario'];
+        $id_usuario     =   $_POST['id_usuario'];
+        $comentario     =   trim($_POST['comentario']);
+
+        if ($id_comentario !== "") {
+            $this->actualizarComentario();
+            return;
+        }
+
+        $datos = array(
+            'id_tarea'      => $id_tarea,
+            'id_usuario'    => $id_usuario,
+            'comentario'    => $comentario
+        );
+
+        $url = RUTA_API . 'comentario';
+        $data = json_encode($datos);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token, 'Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $tarea = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+
+        if ($status !== 201) {
+            $_SESSION['error'] = "No se ha podido guardar el comentario";
+            header('location:' . RUTA_URL . '/backoffice/tareas/' . $id_tarea);
+            return;
+        }
+
+        $_SESSION['exito'] = "Comentario guardado con exito";
+        header('location:' . RUTA_URL . '/backoffice/tareas/' . $id_tarea);
+    }
+
+    private function actualizarComentario()
+    {
+        $url = RUTA_API . 'comentario';
+
+        $id_tarea       =   $_POST['id_tarea'];
+        $id_comentario  =   $_POST['id_comentario'];
+        $id_usuario     =   $_POST['id_usuario'];
+        $comentario     =   trim($_POST['comentario']);
+
+
+        $datos = array(
+            'id_comentario' => $id_comentario,
+            'id_tarea'      => $id_tarea,
+            'id_usuario'    => $id_usuario,
+            'comentario'    => $comentario
+        );
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token, 'Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($datos));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $tarea = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+
+        if ($status !== 200) {
+            $_SESSION['error'] = "No se ha podido actualizar el comentario";
+            header('location:' . RUTA_URL . '/backoffice/tareas/' . $id_tarea);
+            return;
+        }
+
+        $_SESSION['exito'] = "Comentario actualizado con exito";
+        header('location:' . RUTA_URL . '/backoffice/tareas/' . $id_tarea);
+        return;
     }
 
     // FUNCIONES AUXILIARES

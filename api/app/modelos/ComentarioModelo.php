@@ -32,10 +32,10 @@ class ComentarioModelo
     }
     public function updateComentario($id, $comentario)
     {
-        $this->bd->query('UPDATE comentarios SET comentario = :comentario, fecha = :fecha WHERE id_comentario = :id_comentario');
-        $this->bd->bind(':comentario', $comentario);
+        $this->bd->query('UPDATE comentarios SET contenido = :contenido, fecha_comentario = :fecha_comentario WHERE id_comentario = :id_comentario');
+        $this->bd->bind(':contenido', $comentario);
         $this->bd->bind(':id_comentario', $id);
-        $this->bd->bind(':fecha', date('Y-m-d H:i:s'));
+        $this->bd->bind(':fecha_comentario', date('Y-m-d H:i:s'));
         return $this->bd->execute();
     }
     public function deleteComentarioById($id)
@@ -46,13 +46,10 @@ class ComentarioModelo
     }
     public function addComentario($datos)
     {
-        if ($this->isExitComentario($datos->id_peli, $datos->id_usr)) {
-            return false;
-        }
-        $this->bd->query('INSERT INTO comentarios (id_usr, id_peli, comentario) VALUES ( :id_usr, :id_peli, :comentario)');
-        $this->bd->bind(':id_usr', $datos->id_usr);
-        $this->bd->bind(':id_peli', $datos->id_peli);
-        $this->bd->bind(':comentario', $datos->comentario);
+        $this->bd->query('INSERT INTO comentarios (id_tarea,id_usuario,contenido) VALUES ( :id_tarea, :id_usuario, :contenido)');
+        $this->bd->bind(':id_tarea', $datos->id_tarea);
+        $this->bd->bind(':id_usuario', $datos->id_usuario);
+        $this->bd->bind(':contenido', $datos->comentario);
 
         $this->bd->execute();
         return $this->getComentarioById($this->bd->lastInsertId());

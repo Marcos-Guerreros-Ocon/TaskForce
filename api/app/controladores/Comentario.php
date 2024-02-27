@@ -61,13 +61,13 @@ class Comentario extends Controlador
             return;
         }
 
-        if (!$this->modelo('PeliculaModelo')->getPeliculaById($datos->id_peli)) {
+        if (!$this->modelo('TareaModelo')->getTarea($datos->id_tarea)) {
             header('Content-Type: application/json', true, 400);
             echo json_encode(['mensaje' => 'Pelicula no encontrada']);
             return;
         };
 
-        if (!$this->modelo('UsuarioModelo')->getUsuarioById($datos->id_usr)) {
+        if (!$this->modelo('UsuarioModelo')->getUsuarioById($datos->id_usuario)) {
             header('Content-Type: application/json', true, 400);
             echo json_encode(['mensaje' => 'Usuario no encontrado']);
             return;
@@ -90,7 +90,7 @@ class Comentario extends Controlador
         $json = file_get_contents('php://input');
         $datos = json_decode($json);
 
-        if (isset($datos->id_comentario) && isset($datos->id_peli) && isset($datos->id_usr) && isset($datos->comentario)) {
+        if (isset($datos->id_comentario) && isset($datos->id_tarea) && isset($datos->id_usuario) && isset($datos->comentario)) {
             if ($comentarioModelo->updateComentario($datos->id_comentario, $datos->comentario)) {
                 header('Content-Type: application/json', true, 200);
                 echo json_encode(['mensaje' => 'Comentario editado']);
@@ -152,7 +152,7 @@ class Comentario extends Controlador
 
     private function isValidComentario($datos)
     {
-        if (!isset($datos->id_peli) || !isset($datos->id_usr) || !isset($datos->comentario)) {
+        if (!isset($datos->id_tarea) || !isset($datos->id_usuario) || !isset($datos->comentario)) {
             return false;
         }
 

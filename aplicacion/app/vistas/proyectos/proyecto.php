@@ -125,8 +125,10 @@ if (isset($_SESSION['exito'])) {
                                     <?php else : ?>
                                         <h6 class="m-0 font-weight-bold text-primary">Nuevo Proyecto</h6>
                                     <?php endif; ?>
-
-                                    <a class="btn btn-secondary" href="<?= RUTA_URL ?>/proyectos"><i class="fa fa-arrow-left"></i> Volver</a>
+                                    <a href="<?= RUTA_URL ?>/proyectos" class="btn btn-secondary btn-icon-split">
+                                        <span class="icon text-white-50"><i class="fa fa-arrow-left"></i></span>
+                                        <span class="text">Volver</span>
+                                    </a>
                                 </div>
                                 <div class="card-body">
                                     <form action="<?= $method ?>" method="POST">
@@ -315,6 +317,10 @@ if (isset($_SESSION['exito'])) {
                             <div class="form-group">
                                 <label for="cliente" class="required">Trabajador asociado</label>
                                 <input type="text" class="form-control" id="nombreTrabajador" name="nombreTrabajador" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="comentario" class="required">Comentario del trabajador</label>
+                                <textarea class="form-control" id="comentario" name="comentario" rows="3" disabled></textarea>
                             </div>
                             <div class="form-group d-flex align-items-center justify-content-center">
                                 <a class="btn btn-primary" id="actualizarTarea">Actualizar Tarea</a>
@@ -787,6 +793,7 @@ if (isset($_SESSION['exito'])) {
                                 document.getElementById("nombreTareaExistente").value = data.nombre_tarea;
                                 document.getElementById("descripcionTareaExistente").value = data.descripcion_tarea;
                                 document.getElementById("nombreTrabajador").value = data.correo;
+                                document.getElementById("comentario").value = data.comentario;
                                 document.getElementById("actualizarTarea").onclick = () => {
                                     actualizarTarea(data.id_tarea);
                                 }

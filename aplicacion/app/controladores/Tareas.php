@@ -150,4 +150,96 @@ class Tareas extends Controlador
             ];
         $this->vista('tareas/tarea', $data);
     }
+
+    public function comentario()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . RUTA_URL . '/tareas');
+            return;
+        }
+
+        $id_tarea       =   $_POST['id_tarea'];
+        $id_comentario  =   $_POST['id_comentario'];
+        $id_usuario     =   $_SESSION['user']['id_usuario'];
+        $comentario     =   trim($_POST['comentario']);
+
+        if ($id_comentario !== "") {
+            $this->actualizarComentario();
+            return;
+        }
+
+        $datos = array(
+            'id_tarea'      => $id_tarea,
+            'id_usuario'    => $id_usuario,
+            'comentario'    => $comentario
+        );
+
+        $url = RUTA_API . 'comentario';
+        $data = json_encode($datos);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token, 'Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $tarea = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+
+        if ($status !== 201) {
+            $_SESSION['error'] = "No se ha podido guardar el comentario";
+            header('location:' . RUTA_URL . '/tareas/' . $id_tarea);
+            return;
+        }
+
+        $_SESSION['exito'] = "Comentario guardado con exito";
+        header('location:' . RUTA_URL . '/tareas/' . $id_tarea);
+    }
+
+    private function actualizarComentario()
+    {
+        $url = RUTA_API . 'comentario';
+
+        $id_tarea       =   $_POST['id_tarea'];
+        $id_comentario  =   $_POST['id_comentario'];
+        $id_usuario     =   $_SESSION['user']['id_usuario'];
+        $comentario     =   trim($_POST['comentario']);
+
+        $datos = array(
+            'id_comentario' => $id_comentario,
+            'id_tarea'      => $id_tarea,
+            'id_usuario'    => $id_usuario,
+            'comentario'    => $comentario
+        );
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token, 'Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($datos));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $tarea = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+
+        if ($status !== 200) {
+            $_SESSION['error'] = "No se ha podido actualizar el comentario";
+            header('location:' . RUTA_URL . '/tareas/' . $id_tarea);
+            return;
+        }
+
+        $_SESSION['exito'] = "Comentario actualizado con exito";
+        header('location:' . RUTA_URL . '/tareas/' . $id_tarea);
+        return;
+    }
 }

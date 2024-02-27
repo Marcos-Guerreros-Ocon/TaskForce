@@ -22,17 +22,14 @@
     <link href="<?= RUTA_URL ?>/public/css/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
     <style>
-        tbody td:hover {
-            cursor: pointer;
-        }
+        .img-max {
 
-        tbody tr {
-            transition: all 0.25s;
-        }
-
-        tbody tr:hover {
-            color: black;
-            background: #b9b9b9 !important;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            object-position: top;
+            border: 1px solid #dddfeb !important;
+            border-radius: 0.35rem;
         }
     </style>
 </head>
@@ -57,7 +54,7 @@
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item active"><a href="#">Mis proyectos</a></li>
+                                <li class="breadcrumb-item active"><a href="#">Tareas</a></li>
                                 <li class="breadcrumb-item"></li>
                             </ol>
                         </nav>
@@ -65,8 +62,8 @@
 
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Mis Proyectos</h6>
-                            <a class="btn btn-primary" href="<?= RUTA_URL ?>/proyectos/nuevo">Agregar Proyecto</a>
+                            <h6 class="m-0 font-weight-bold text-primary">Tareas</h6>
+
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -75,43 +72,41 @@
                                         <tr>
                                             <th>Nombre</th>
                                             <th>Descripción</th>
-
-                                            <th>Cliente</th>
-                                            <th>Fecha inicio</th>
-                                            <th>Fecha fin</th>
+                                            <th>Proyecto</th>
+                                            <th>Trabajador</th>
+                                            <th>Estado</th>
                                             <th>Accion</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($datos['proyectos'] as $proyecto) : ?>
-                                            <tr id="<?= $proyecto['id_proyecto'] ?>">
-                                                <td><?= $proyecto['nombre'] ?></td>
-                                                <?php if (strlen($proyecto['descripcion']) > 50) : ?>
-                                                    <td><?= substr($proyecto['descripcion'], 0, 50) . "..." ?></td>
-                                                <?php else : ?>
-                                                    <td><?= $proyecto['descripcion'] ?></td>
-                                                <?php endif; ?>
-                                                <td><?= $proyecto['cliente'] ?></td>
-                                                <td><?= date('d/m/Y', strtotime($proyecto['fecha_inicio']))  ?></td>
-                                                <?php if ($proyecto['fecha_estimacion_final'] == '') : ?>
-                                                    <td>-</td>
-                                                <?php else : ?>
-                                                    <td><?= date('d/m/Y', strtotime($proyecto['fecha_estimacion_final'])) ?></td>
-                                                <?php endif; ?>
+                                        <?php foreach ($datos['tareas'] as $tarea) : ?>
+                                            <tr id="<?= $tarea['id_tarea'] ?>">
+                                                <td><?= $tarea['nombre_tarea'] ?></td>
+                                                <td><?= $tarea['descripcion_tarea'] ?></td>
+                                                <td><?= $tarea['nombre'] ?></td>
+                                                <td><?= $tarea['correo'] ?></td>
                                                 <td>
-                                                    <a href="<?= RUTA_URL ?>/proyectos/<?= $proyecto['id_proyecto'] ?>" class="btn btn-primary btn-icon-split">
+                                                    <?php if ($tarea['estado'] === "pendiente") : ?>
+                                                        <span class="badge bg-warning text-accent p-2">Pendiente</span>
+                                                    <?php elseif ($tarea['estado'] === 'en_progreso') : ?>
+                                                        <span class="badge bg-info  text-accent p-2">En progreso</span>
+                                                    <?php else : ?>
+                                                        <span class="badge bg-success text-accent p-2 ">Completada</span>
+                                                    <?php endif; ?>
+                                                </td>
+
+                                                <td>
+                                                    <a href="<?= RUTA_URL . '/backoffice/tareas/' . $tarea['id_tarea'] ?>" class="btn btn-primary btn-icon-split">
                                                         <span class="icon text-white-50"><i class="fa fa-pencil-alt"></i></span>
                                                         <span class="text">Editar</span>
                                                     </a>
-                                                    <a id="<?= $proyecto['id_proyecto']  ?>" class="btn btn-danger  btn-icon-split borrar">
+                                                    <a id="<?= $tarea['id_tarea'] ?>" class="btn btn-danger  btn-icon-split borrar">
                                                         <span class="icon text-white-50"><i class="fa fa-trash-alt"></i></span>
                                                         <span class="text">Eliminar</span>
                                                     </a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
-
-
                                     </tbody>
                                 </table>
                             </div>
@@ -170,7 +165,7 @@
                     "targets": [-1]
                 }],
                 "order": [
-                    [4, 'desc'] // Ordenar por la segunda columna inicialmente
+                    [0, 'desc'] // Ordenar por la segunda columna inicialmente
                 ]
 
             }));
@@ -179,7 +174,7 @@
                 item.onclick = async () => {
                     let id = item.getAttribute('id');
                     Swal.fire({
-                        title: "¿Estas seguro de borrar este proyecto?",
+                        title: "¿Estas seguro de borrar esta tarea?",
                         text: "Una vez borrado no se podrá recuperar",
                         icon: "warning",
                         showCancelButton: true,
@@ -198,18 +193,17 @@
 
             const borrar = async (id) => {
                 const token = getCookie('token');
-                const response = await fetch(`<?= RUTA_API ?>proyecto?id=${id}`, {
+                const response = await fetch(`${RUTA_API}/tarea?id=${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     }
                 });
-
-                if (response.status === 200) {
+                if (response) {
                     swal.fire({
-                        title: "Proyecto borrado",
-                        text: "El proyecto ha sido borrado correctamente",
+                        title: "Tarea borrada",
+                        text: "La tarea ha sido borrado correctamente",
                         icon: "success",
                         confirmButtonText: "Aceptar",
                     }).then((result) => {
@@ -218,22 +212,12 @@
                 } else {
                     swal.fire({
                         title: "Error",
-                        text: "Ha ocurrido un error al borrar el proyecto",
+                        text: "Ha ocurrido un error al borrar la tarea",
                         icon: "error",
                         confirmButtonText: "Aceptar",
                     });
                 }
             }
-
-            Array.from(document.querySelectorAll("tr")).forEach(item => {
-                item.onclick = (event) => {
-                    console.log($(event.target).is('td:last-child'));
-                    if ($(event.target).is('td:last-child') || $(event.target).is('td:last-child *')) {
-                        return;
-                    }
-                    window.location.href = `<?= RUTA_URL ?>/proyectos/${item.id}`;
-                }
-            });
         });
     </script>
 

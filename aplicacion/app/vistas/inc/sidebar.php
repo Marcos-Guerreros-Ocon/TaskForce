@@ -3,7 +3,7 @@
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?= RUTA_URL ?>/dashboard">
         <div class="sidebar-brand-icon">
-            <img src="<?= RUTA_URL ?> /public/img/logo.png" class="img-thumbnail" alt="" srcset="">
+            <img src="<?= RUTA_URL ?>/public/img/logo.png" class="img-thumbnail" alt="" srcset="">
         </div>
         <div class="sidebar-brand-text mx-3">Task Force </div>
     </a>
@@ -57,8 +57,8 @@
                 <span>Proyectos</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="charts.html">
+        <li class="nav-item <?php if ($datos['pag_actual'] == 'backoffice/tareas') : ?> active <?php endif; ?>">
+            <a class="nav-link" href="<?= RUTA_URL ?>/backoffice/tareas">
                 <i class="fas fa-fw fa-tasks"></i>
                 <span>Tareas</span>
             </a>

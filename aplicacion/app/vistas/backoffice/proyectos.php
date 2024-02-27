@@ -99,8 +99,14 @@
                                                     <td><?= date('d/m/Y', strtotime($proyecto['fecha_estimacion_final'])) ?></td>
                                                 <?php endif; ?>
                                                 <td>
-                                                    <a href="<?= RUTA_URL ?>/backoffice/proyectos/<?= $proyecto['id_proyecto'] ?>" class="btn btn-primary">Editar</a>
-                                                    <a id="<?= $proyecto['id_proyecto'] ?>" class="btn btn-danger borrar">Eliminar</a>
+                                                    <a href="<?= RUTA_URL ?>/backoffice/proyectos/<?= $proyecto['id_proyecto'] ?>" class="btn btn-primary btn-icon-split">
+                                                        <span class="icon text-white-50"><i class="fa fa-pencil-alt"></i></span>
+                                                        <span class="text">Editar</span>
+                                                    </a>
+                                                    <a id="<?= $proyecto['id_proyecto']  ?>" class="btn btn-danger  btn-icon-split borrar">
+                                                        <span class="icon text-white-50"><i class="fa fa-trash-alt"></i></span>
+                                                        <span class="text">Eliminar</span>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
