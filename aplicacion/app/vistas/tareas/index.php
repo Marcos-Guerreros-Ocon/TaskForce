@@ -153,9 +153,10 @@
             }));
 
 
-            Array.from(document.querySelectorAll("tbody tr td")).forEach(item => {
+            Array.from(document.querySelectorAll("tbody tr")).forEach(item => {
                 item.onclick = (event) => {
-                    if ($(event.target).is('td:last-child') || $(event.target).is('td:last-child *')) {
+
+                    if ($(event.target).is('td:last-child')) {
                         return;
                     }
                     window.location.href = `<?= RUTA_URL ?>/tareas/${item.id}`;

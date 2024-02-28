@@ -61,6 +61,7 @@ class Tareas extends Controlador
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $tarea = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
         if ($status === 401) {
             $sessionManager = new SessionManager();
             $sessionManager->destroy();

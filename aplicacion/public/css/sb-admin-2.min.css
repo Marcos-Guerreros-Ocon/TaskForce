@@ -12684,3 +12684,6 @@ body.sidebar-toggled footer.sticky-footer {
 .sidebar{
     transition: all 0.25s linear;
 }
+input[type=date].form-control{
+    width: 15rem !important;
+}

@@ -84,7 +84,7 @@
                                     </thead>
                                     <tbody>
                                         <?php foreach ($datos['usuarios'] as $usuario) : ?>
-                                            <tr>
+                                            <tr id="<?= $usuario['id_usuario'] ?>">
                                                 <td class="">
                                                     <?php if ($usuario['ruta_foto_perfil'] != null) : ?>
                                                         <img src="<?= RUTA_URL . '/' . $usuario['ruta_foto_perfil'] ?>" alt="" class="img-max rounded-circle shadow-lg">
@@ -174,6 +174,16 @@
                 ]
 
             }));
+
+            Array.from(document.querySelectorAll("tbody tr")).forEach(item => {
+                item.onclick = (event) => {
+
+                    if ($(event.target).is('td:last-child')) {
+                        return;
+                    }
+                    window.location.href = `<?= RUTA_URL ?>/backoffice/usuarios/${item.id}`;
+                }
+            });
 
             document.querySelectorAll('.borrar').forEach(item => {
                 item.onclick = async () => {

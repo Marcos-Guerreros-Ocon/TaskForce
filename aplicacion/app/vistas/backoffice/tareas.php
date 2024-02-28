@@ -219,6 +219,17 @@
                 }
             }
         });
+
+
+        Array.from(document.querySelectorAll("tbody tr")).forEach(item => {
+                item.onclick = (event) => {
+
+                    if ($(event.target).is('td:last-child')) {
+                        return;
+                    }
+                    window.location.href = `<?= RUTA_URL ?>/backoffice/tareas/${item.id}`;
+                }
+            });
     </script>
 
 
