@@ -1,12 +1,28 @@
 <?php
-
 $bg = "";
 
-if ($datos['datos']['tareas_porcentaje'] == 100) {
+$tareas_porcentaje = 0;
+$tareas_completadas = 0;
+$tareas_en_progreso = 0;
+$tareas_pendientes = 0;
+$tareas_completadas = 0;
+$tareas_total = 0;
+$proyectos = array();
+if (isset($datos['datos'])) {
+  $tareas_total = $datos['datos']['tareas_total'];
+  $tareas_porcentaje = $datos['datos']['tareas_porcentaje'];
+  $tareas_completadas = $datos['datos']['tareas_completadas'];
+  $tareas_en_progreso = $datos['datos']['tareas_en_progreso'];
+  $tareas_pendientes = $datos['datos']['tareas_pendientes'];
+  $proyectos = $datos['datos']['misProyectos'];
+
+}
+
+if ($tareas_porcentaje == 100) {
     $bg = "bg-success";
-} else if ($datos['datos']['tareas_porcentaje'] < 100  && $datos['datos']['tareas_porcentaje'] >= 50) {
+} else if ($tareas_porcentaje < 100  && $tareas_porcentaje >= 50) {
     $bg = "";
-} else if ($datos['datos']['tareas_porcentaje'] < 50 && $datos['datos']['tareas_porcentaje'] >= 25) {
+} else if ($tareas_porcentaje < 50 && $tareas_porcentaje >= 25) {
     $bg = "bg-warning";
 } else {
     $bg = "bg-danger";
@@ -55,7 +71,7 @@ if ($datos['datos']['tareas_porcentaje'] == 100) {
                                                 Total de tareas
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?= $datos['datos']['tareas_total'] ?>
+                                                <?= $tareas_total ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -76,7 +92,7 @@ if ($datos['datos']['tareas_porcentaje'] == 100) {
                                                 Tareas Completadas
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?= $datos['datos']['tareas_completadas'] ?>
+                                                <?= $tareas_completadas ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -97,7 +113,7 @@ if ($datos['datos']['tareas_porcentaje'] == 100) {
                                                 Tareas Pendientes
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?= $datos['datos']['tareas_pendientes'] ?>
+                                                <?= $tareas_pendientes  ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -119,12 +135,12 @@ if ($datos['datos']['tareas_porcentaje'] == 100) {
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col-auto">
                                                     <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                                                        <?= $datos['datos']['tareas_porcentaje'] ?>%
+                                                        <?= $tareas_porcentaje ?>%
                                                     </div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar <?= $bg ?>" role="progressbar" style="width: <?= $datos['datos']['tareas_porcentaje'] ?>%" aria-valuenow="<?= $datos['datos']['tareas_porcentaje'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        <div class="progress-bar <?= $bg ?>" role="progressbar" style="width: <?= $tareas_porcentaje ?>%" aria-valuenow="<?= $tareas_porcentaje ?>" aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -196,7 +212,7 @@ if ($datos['datos']['tareas_porcentaje'] == 100) {
                                         <h6 class="m-0 font-weight-bold text-primary">Últimos proyectos</h6>
                                     </div>
                                     <div class="card-body">
-                                        <?php foreach ($datos['datos']['misProyectos'] as $proyecto) : ?>
+                                        <?php foreach ($proyectos as $proyecto) : ?>
                                             <?php
                                             $porcentaje = intval($proyecto['porcentaje_completado']);
                                             if ($porcentaje == 100) {
@@ -214,22 +230,7 @@ if ($datos['datos']['tareas_porcentaje'] == 100) {
                                                 <div class="progress-bar <?= $bg ?>" role="progressbar" style="width: <?= $porcentaje ?>%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
                                         <?php endforeach; ?>
-                                        <!-- <h4 class="small font-weight-bold">Sales Tracking <span class="float-right">40%</span></h4>
-                                        <div class="progress mb-4">
-                                            <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <h4 class="small font-weight-bold">Customer Database <span class="float-right">60%</span></h4>
-                                        <div class="progress mb-4">
-                                            <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <h4 class="small font-weight-bold">Payout Details <span class="float-right">80%</span></h4>
-                                        <div class="progress mb-4">
-                                            <div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <h4 class="small font-weight-bold">Account Setup <span class="float-right">Complete!</span></h4>
-                                        <div class="progress">
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div> -->
+            
                                     </div>
                                 </div>
                             </div>
@@ -278,9 +279,9 @@ if ($datos['datos']['tareas_porcentaje'] == 100) {
         const nombresProyectos = Object.values(misTareas).map(item => item.nombre_proyecto);
         const cantidades = Object.values(misTareas).map(item => item.cantidad);
 
-        const tareasCompletas = <?= $datos['datos']['tareas_completadas'] ?>;
-        const tareasEnProgreso = <?= $datos['datos']['tareas_en_progreso'] ?>;
-        const tareasPendientes = <?= $datos['datos']['tareas_pendientes'] ?>;
+        const tareasCompletas = <?= $tareas_completadas ?>;
+        const tareasEnProgreso = <?= $tareas_en_progreso ?>;
+        const tareasPendientes = <?= $tareas_pendientes ?>;
 
         const ctx = document.getElementById('myAreaChart').getContext('2d');
         const myChart = new Chart(ctx, {
@@ -296,6 +297,11 @@ if ($datos['datos']['tareas_porcentaje'] == 100) {
                 }]
             },
             options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
                 maintainAspectRatio: false,
                 layout: {
                     padding: {
@@ -307,7 +313,11 @@ if ($datos['datos']['tareas_porcentaje'] == 100) {
                 },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+
                     }
                 }
             }

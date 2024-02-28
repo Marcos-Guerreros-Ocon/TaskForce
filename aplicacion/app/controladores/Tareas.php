@@ -197,6 +197,7 @@ class Tareas extends Controlador
             return;
         }
 
+        $this->sendMail($id_tarea,$comentario);
         $_SESSION['exito'] = "Comentario guardado con exito";
         header('location:' . RUTA_URL . '/tareas/' . $id_tarea);
     }
@@ -238,8 +239,69 @@ class Tareas extends Controlador
             return;
         }
 
+        $this->sendMail($id_tarea,$comentario);
         $_SESSION['exito'] = "Comentario actualizado con exito";
         header('location:' . RUTA_URL . '/tareas/' . $id_tarea);
         return;
+    }
+
+
+    private function sendMail($id_tarea, $comentario)
+    {
+
+        $url = RUTA_API . 'tarea?id=' . $id_tarea;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $tarea = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+        if ($status === 404) {
+            header('location:' . RUTA_URL . '/tareas');
+            return;
+        }
+        $tarea = json_decode($tarea, true);
+
+
+        $url = RUTA_API . 'usuario?id_usuario=' . $tarea['id_gestor'];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $responsable = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+        if ($status === 404) {
+            header('location:' . RUTA_URL . '/tareas');
+            return;
+        }
+        $responsable = json_decode($responsable, true);
+
+
+        $asunto         =   "Comentario en la tarea " . $tarea['nombre_tarea'];
+
+        $destinatario   =   $responsable['correo'];
+        $correoUsuario = $_SESSION['user']['correo'];
+        $nombreTarea = $tarea['nombre_tarea'];
+        $nombreProyecto = $tarea['nombre'];
+
+        $mensaje = "<h1>Comentario enviado</h1>";
+        $mensaje .= "<p>El usuario <strong>$correoUsuario </strong> ha realizado el siguiente comentario en la tarea <strong>$nombreTarea</strong> del proyecto <strong>$nombreProyecto</strong>:</p>";
+        $mensaje .= "<p> $comentario</p>";
+
+        $mail = new Mail();
+        $mail->enviarCorreo($destinatario, $asunto, $mensaje);
+    
     }
 }

@@ -113,6 +113,12 @@ class Proyecto extends Controlador
 
         $proyectoModelo = $this->modelo('ProyectoModelo');
         $proyecto = $proyectoModelo->addProyecto($datos);
+
+        $token = new Token();
+        $aux = $token->getPayload();
+        $id = $aux->id_usr;
+        Logger::setLog($id,ACCION_AGREGAR_PROYECTO);
+
         header('Content-Type: application/json', true, 200);
         echo json_encode($proyecto);
     }
@@ -133,6 +139,12 @@ class Proyecto extends Controlador
 
         $proyectoModelo = $this->modelo('ProyectoModelo');
         $proyecto = $proyectoModelo->updateProyecto($datos);
+        
+        $token = new Token();
+        $aux = $token->getPayload();
+        $id = $aux->id_usr;
+        Logger::setLog($id,ACCION_MODIFICAR_PROYECTO);
+
         header('Content-Type: application/json', true, 200);
         echo json_encode($proyecto);
     }
@@ -141,6 +153,12 @@ class Proyecto extends Controlador
     {
         $proyectoModelo = $this->modelo('ProyectoModelo');
         $proyectoModelo->deleteProyecto($id);
+
+        $token = new Token();
+        $aux = $token->getPayload();
+        $id = $aux->id_usr;
+        Logger::setLog($id,ACCION_BORRAR_PROYECTO);
+
         header('Content-Type: application/json', true, 200);
         echo json_encode(['mensaje' => 'Proyecto eliminado']);
     }

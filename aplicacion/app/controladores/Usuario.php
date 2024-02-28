@@ -109,6 +109,31 @@ class Usuario extends Controlador
 
         $this->vista('usuario/perfil', $data);
     }
+
+    public function log() {
+        $session = new SessionManager();
+        if (!$session->has('user')) {
+            header('Location: ' . RUTA_URL);
+            return;
+        }
+        $this->token = $_COOKIE['token'];
+
+        $url = RUTA_API . 'usuario/log';
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' .  $this->token));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        $logs = json_decode($response,true);
+        $data = array(
+            'logs'  => $logs
+        );
+
+        $this->vista('usuario/logs',$data);
+        return;
+    }
     private function actualizar()
     {
 

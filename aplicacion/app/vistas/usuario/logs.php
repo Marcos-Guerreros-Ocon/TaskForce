@@ -42,7 +42,7 @@
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item active"><a href="#">Mis tareas</a></li>
+                                <li class="breadcrumb-item active"><a href="#">Mi actividad</a></li>
                                 <li class="breadcrumb-item"></li>
                             </ol>
                         </nav>
@@ -50,43 +50,24 @@
 
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Mis tareas</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Mi actividad</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Nombre</th>
-                                            <th>Descripción</th>
-                                            <th>Proyecto</th>
-                                            <th>Estado</th>
-                                            <th>Accion</th>
+                                            <th>Acción Realizada</th>
+                                            <th>Dia</th>
+                                            <th>Hora</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($datos['tareas'] as $tarea) : ?>
-                                            <tr id="<?= $tarea['id_tarea'] ?>">
-                                                <td><?= $tarea['nombre_tarea'] ?></td>
-                                                <td><?= $tarea['descripcion_tarea'] ?></td>
-                                                <td><?= $tarea['nombre'] ?></td>
-                                                <td>
-                                                    <?php if ($tarea['estado'] === "pendiente") : ?>
-                                                        <span class="badge bg-warning text-accent p-2">Pendiente</span>
-                                                    <?php elseif ($tarea['estado'] === 'en_progreso') : ?>
-                                                        <span class="badge bg-info  text-accent p-2">En progreso</span>
-                                                    <?php else : ?>
-                                                        <span class="badge bg-success text-accent p-2 ">Completada</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
-
-                                                    <a href="<?= RUTA_URL ?>/tareas/<?= $tarea['id_tarea'] ?>" class="btn btn-primary btn-icon-split">
-                                                        <span class="icon text-white-50"><i class="fa fa-pencil-alt"></i></span>
-                                                        <span class="text">Editar</span>
-                                                    </a>
-
-                                                </td>
+                                        <?php foreach ($datos['logs'] as $log) : ?>
+                                            <tr>
+                                                <td><?=  $log['accion_realizada']?></td>
+                                                <td><?=  date('d/m/Y', strtotime($log['fecha_log'])) ?></td>
+                                                <td><?=  date('H:i', strtotime($log['fecha_log']))  ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -142,25 +123,11 @@
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
                 },
-                "columnDefs": [{
-                    "orderable": false,
-                    "targets": [-1]
-                }],
                 "order": [
-                    [3, 'desc'] // Ordenar por la segunda columna inicialmente
+                    [ 1, 'desc'] // Ordenar por la segunda columna inicialmente
                 ]
 
             }));
-
-
-            Array.from(document.querySelectorAll("tbody tr td")).forEach(item => {
-                item.onclick = (event) => {
-                    if ($(event.target).is('td:last-child') || $(event.target).is('td:last-child *')) {
-                        return;
-                    }
-                    window.location.href = `<?= RUTA_URL ?>/tareas/${item.id}`;
-                }
-            });
         });
     </script>
 

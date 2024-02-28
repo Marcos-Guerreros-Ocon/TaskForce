@@ -9,7 +9,11 @@ class ComentarioModelo
     }
     public function getComentarios()
     {
-        $this->bd->query('SELECT * FROM comentarios');
+        $this->bd->query('SELECT c.id_comentario,c.contenido, c.fecha_comentario,c.id_tarea,  p.nombre, t.nombre_tarea, u.correo
+        FROM comentarios c 
+       LEFT JOIN tareas t ON t.id_tarea = c.id_tarea
+       JOIN proyectos p ON p.id_proyecto = t.id_proyecto
+       JOIN usuarios u ON u.id_usuario = c.id_usuario;');
         return $this->bd->registros();
     }
     public function getComentarioById($id)
@@ -53,13 +57,5 @@ class ComentarioModelo
 
         $this->bd->execute();
         return $this->getComentarioById($this->bd->lastInsertId());
-    }
-
-    private function isExitComentario($idPeli, $idUsr)
-    {
-        $this->bd->query('SELECT * FROM comentarios WHERE id_peli = :id_peli AND id_usr = :id_usr');
-        $this->bd->bind(':id_peli', $idPeli);
-        $this->bd->bind(':id_usr', $idUsr);
-        return $this->bd->registro();
     }
 }

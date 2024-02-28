@@ -726,6 +726,34 @@ class Backoffice extends Controlador
         return;
     }
 
+    public function comentarios(){
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, RUTA_API . 'comentario');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($status === 401) {
+            $sessionManager = new SessionManager();
+            $sessionManager->destroy();
+            unset($_COOKIE['token']);
+            header('location:' . RUTA_URL . '/usuario');
+            return;
+        }
+        curl_close($ch);
+        $comentarios = json_decode($response, true);
+        foreach ($comentarios as $key => $comentario) {
+            if (strlen($comentario['contenido']) > 100) {
+                $comentarios[$key]['contenido'] = substr($comentario['contenido'], 0, 100) . '...';
+            }
+        }
+        $data = [
+            'comentarios' => $comentarios,
+            'pag_actual' => 'backoffice/comentarios'
+        ];
+        $this->vista('backoffice/comentarios', $data);
+    }
 
     private function comentario()
     {

@@ -18,11 +18,6 @@ class Comentario extends Controlador
             $this->addComentario();
             return;
         }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id_peli'])) {
-            $this->getComentariosByPeli($_GET['id_peli']);
-            return;
-        }
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id_comentario'])) {
             $this->getComentarioById($_GET['id_comentario']);
             return;
@@ -63,7 +58,7 @@ class Comentario extends Controlador
 
         if (!$this->modelo('TareaModelo')->getTarea($datos->id_tarea)) {
             header('Content-Type: application/json', true, 400);
-            echo json_encode(['mensaje' => 'Pelicula no encontrada']);
+            echo json_encode(['mensaje' => 'Tarea no encontrada']);
             return;
         };
 
@@ -159,29 +154,4 @@ class Comentario extends Controlador
         return true;
     }
 
-    private function getComentariosByPeli($idPeli)
-    {
-        $result = array();
-        $comentarios = $this->modelo('ComentarioModelo')->getComentariosByPeli($idPeli);
-        $result['id_peli'] = $idPeli;
-        foreach ($comentarios as $comentario) {
-
-            $usuario = $this->modelo('UsuarioModelo')->getUsuarioById($comentario->id_usr);
-            $result['comentarios'][] = [
-                'id_comentario' => $comentario->id_comentario,
-                'comentario' => $comentario->comentario,
-                'fecha' => $comentario->fecha,
-                'id_usr' => $usuario->id_usr,
-                'nombre' => $usuario->nombre,
-                'apellidos' => $usuario->apellidos,
-                'username' => $usuario->username,
-                'foto' => $usuario->foto
-
-            ];
-        }
-
-        header('Content-Type: application/json', true, 200);
-        echo json_encode($result);
-        return;
-    }
 }

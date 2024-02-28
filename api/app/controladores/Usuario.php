@@ -3,6 +3,7 @@
 class Usuario extends Controlador
 {
 
+    private $token;
     public function __construct()
     {
     }
@@ -16,6 +17,7 @@ class Usuario extends Controlador
             echo json_encode(['mensaje' => 'No autorizado']);
             exit;
         }
+       $this->token = $token->getPayload();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->addUsuario();
@@ -75,6 +77,8 @@ class Usuario extends Controlador
         }
 
         if ($usuario->clave === $data->clave) {
+            Logger::setLog($usuario->id_usuario,ACCION_LOGIN);
+
             header('Content-Type: application/json', true, 200);
             $token = new Token();
             $data = [
@@ -87,6 +91,22 @@ class Usuario extends Controlador
 
         header('Content-Type: application/json', true, 400);
         echo json_encode(['mensaje' => 'No se ha podido iniciar sesion']);
+        return;
+    }
+
+    public function log(){
+        $token = new Token();
+        if (!$token->isLogin()) {
+            header("Content-Type: application/json", true, 401);
+            echo json_encode(['mensaje' => 'No autorizado']);
+            exit;
+        }
+
+        $id = $token->getPayload()->id_usr;
+        $logs = Logger::getLogs($id);
+
+        header("Content-Type: application/json", true, 200);
+        echo json_encode($logs);
         return;
     }
 
@@ -249,6 +269,8 @@ class Usuario extends Controlador
             return;
         }
 
+        $id = $this->token->id_usr;
+        Logger::setLog($id,ACCION_AGREGAR_USUARIO);
         header('Content-Type: application/json', true, 201);
         echo json_encode($usario);
         return;
@@ -350,6 +372,8 @@ class Usuario extends Controlador
             return;
         }
 
+        $id = $this->token->id_usr;
+        Logger::setLog($id,ACCION_MODIFICAR_USUARIO);
         header('Content-Type: application/json', true, 200);
         echo json_encode($usario);
         return;
@@ -373,6 +397,9 @@ class Usuario extends Controlador
             return;
         }
 
+        
+        $id = $this->token->id_usr;
+        Logger::setLog($id,ACCION_BORRAR_USUARIO);
         header('Content-Type: application/json', true, 200);
         echo json_encode(['mensaje' => 'Usuario borrado correctamente']);
         return;

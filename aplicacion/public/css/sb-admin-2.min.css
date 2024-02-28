@@ -11530,7 +11530,7 @@ a:focus {
 
 .sidebar {
     width: 6.5rem;
-    min-height: 100vh
+    min-height: 100vh;
 }
 
 .sidebar .nav-item {
@@ -12679,4 +12679,8 @@ body.sidebar-toggled footer.sticky-footer {
     color: #e74a3b;
     font-size: 0.75rem;
     line-height: 1;
+}
+
+.sidebar{
+    transition: all 0.25s linear;
 }

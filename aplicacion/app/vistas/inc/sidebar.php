@@ -70,8 +70,8 @@ if (isset($datos['pag_actual'])) {
             </a>
         </li>
         <!-- Nav Item - Tables -->
-        <li class="nav-item">
-            <a class="nav-link" href="tables.html">
+        <li class="nav-item <?php if ($pag_actual == 'backoffice/comentarios') : ?> active <?php endif; ?>">
+            <a class="nav-link" href="<?= RUTA_URL ?>/backoffice/comentarios">
                 <i class="fas fa-fw fa-comment"></i>
                 <span>Comentarios</span>
             </a>

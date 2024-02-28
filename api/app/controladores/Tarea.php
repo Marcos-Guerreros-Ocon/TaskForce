@@ -123,6 +123,12 @@ class Tarea extends Controlador
             exit;
         }
         $idTarea = $tarea->addTarea($datos);
+
+        $token = new Token();
+        $aux = $token->getPayload();
+        $id = $aux->id_usr;
+        Logger::setLog($id,ACCION_AGREGAR_TAREA);
+
         echo json_encode(['id_tarea' => $idTarea]);
     }
     private function updateTarea($idTarea)
@@ -130,6 +136,11 @@ class Tarea extends Controlador
         $tarea = $this->modelo('TareaModelo');
         $datos = json_decode(file_get_contents('php://input'), true);
         $tarea = $tarea->updateTarea($idTarea, $datos);
+
+        $token = new Token();
+        $aux = $token->getPayload();
+        $id = $aux->id_usr;
+        Logger::setLog($id,ACCION_MODIFICAR_TAREA);
         header('Content-Type: application/json', true, 200);
         echo json_encode($tarea);
     }
@@ -137,6 +148,12 @@ class Tarea extends Controlador
     {
         $tarea = $this->modelo('TareaModelo');
         $tarea->deleteTarea($idTarea);
+
+        $token = new Token();
+        $aux = $token->getPayload();
+        $id = $aux->id_usr;
+        Logger::setLog($id,ACCION_BORRAR_TAREA);
+
         header('Content-Type: application/json', true, 200);
         echo json_encode(['mensaje' => 'Tarea eliminada']);
     }
