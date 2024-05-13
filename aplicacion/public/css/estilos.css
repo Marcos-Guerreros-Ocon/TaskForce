@@ -1,0 +1,62 @@
+:root {
+   --color-primario: #293241 !important;
+   --color-secundario: #1d0e13;
+   --color-terciario: #6c757d;
+}
+
+.btn-primary {
+   background-color: var(--color-primario);
+   border-color: var(--color-primario);
+}
+
+body {
+   min-height: 100vh;
+}
+
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:hover {
+   background-color: #293241 !important;
+   border-color: #293241 !important;
+   box-shadow: 0 0 0 0.2rem rgba(29, 14, 19, 0.25);
+}
+
+.form-control:focus,
+.form-control:active,
+.form-control:hover {
+   border-color: var(--color-secundario);
+   box-shadow: 0 0 0 0.2rem rgba(29, 14, 19, 0.25);
+}
+
+.text-primary {
+   color: var(--color-primario) !important;
+   text-decoration: none;
+   cursor: pointer;
+}
+
+.bg-primary {
+   background-color: var(--color-primario) !important;
+}
+
+.bg-secundary {
+   background-color: var(--color-secundario) !important;
+}
+
+.bg-terciario {
+   background-color: var(--color-terciario) !important;
+}
+
+.btn-outline-primary {
+   color: var(--color-primario) !important;
+   border-color: var(--color-primario) !important;
+}
+
+.btn-outline-primary:hover {
+   color: #fff !important;
+   background-color: var(--color-primario) !important;
+   border-color: var(--color-primario) !important;
+}
+
+.text-secundary {
+   color: var(--color-secundario) !important;
+}
